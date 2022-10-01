@@ -11,6 +11,7 @@ declare global {
     Cypress: boolean;
   }
 }
+console.log("");
 
 const App: React.FC<Props> = props => {
   const { Component, pageProps } = props;
