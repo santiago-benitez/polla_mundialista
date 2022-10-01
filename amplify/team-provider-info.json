@@ -10,6 +10,14 @@
       "StackName": "amplify-pollamundialista-dev-104726",
       "StackId": "arn:aws:cloudformation:us-east-1:501878680001:stack/amplify-pollamundialista-dev-104726/5a41d4f0-41a0-11ed-9b9c-127f3e52aef9",
       "AmplifyAppId": "d22egsc3zu84x2"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d22egsc3zu84x2",
+          "type": "cicd"
+        }
+      }
     }
   }
 }
