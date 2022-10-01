@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-pollamundialista-dev-104726-authRole",
+      "UnauthRoleArn": "arn:aws:iam::501878680001:role/amplify-pollamundialista-dev-104726-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::501878680001:role/amplify-pollamundialista-dev-104726-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-pollamundialista-dev-104726-deployment",
+      "UnauthRoleName": "amplify-pollamundialista-dev-104726-unauthRole",
+      "StackName": "amplify-pollamundialista-dev-104726",
+      "StackId": "arn:aws:cloudformation:us-east-1:501878680001:stack/amplify-pollamundialista-dev-104726/5a41d4f0-41a0-11ed-9b9c-127f3e52aef9",
+      "AmplifyAppId": "d22egsc3zu84x2"
+    }
+  }
+}

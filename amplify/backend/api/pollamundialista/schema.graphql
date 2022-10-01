@@ -1,0 +1,52 @@
+type PollaMundialista @model {
+  id: ID!
+  name: String!
+  subscriptionPrice: Float!
+  firstPrize: Float!
+  secondPrize: Float!
+  thirdPrize: Float!
+  fourthPrize: Float!
+  fifthPrize: Float!
+  tournamentId: ID!
+  tournament: Tournament @connection(fields: ["tournamentId"])
+  pollaSubscriptions: [PollaSubscription]
+    @connection(keyName: "byPollaMundialista", fields: ["id"])
+}
+
+type Tournament @model {
+  id: ID!
+  name: String!
+  descpription: String
+}
+
+type PollaSubscription
+  @model
+  @key(name: "byPollaMundialista", fields: ["pollaMundialistaId"]) {
+  id: ID!
+  isAdmin: Boolean!
+  pollaMundialistaId: ID!
+  pollaMundialista: PollaMundialista @connection(fields: ["pollaMundialistaId"])
+  totalPoints: Int!
+  status: String!
+}
+
+# type Blog @model {
+#   id: ID!
+#   name: String!
+#   posts: [Post] @connection(keyName: "byBlog", fields: ["id"])
+# }
+
+# type Post @model @key(name: "byBlog", fields: ["blogID"]) {
+#   id: ID!
+#   title: String!
+#   blogID: ID!
+#   blog: Blog @connection(fields: ["blogID"])
+#   comments: [Comment] @connection(keyName: "byPost", fields: ["id"])
+# }
+
+# type Comment @model @key(name: "byPost", fields: ["postID", "content"]) {
+#   id: ID!
+#   postID: ID!
+#   post: Post @connection(fields: ["postID"])
+#   content: String!
+# }
