@@ -1,4 +1,3 @@
-import Bugsnag from "@bugsnag/js";
 import axios from "axios";
 
 import CONSTANTS from "../config/constants";
@@ -22,7 +21,6 @@ axiosDefault.interceptors.response.use(
   },
   error => {
     // Do something with response error
-    Bugsnag.notify(error);
     return error;
   }
 );

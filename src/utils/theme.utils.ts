@@ -1,5 +1,4 @@
 // Theme utility functions
-import Bugsnag from "@bugsnag/js";
 
 import CONSTANTS from "config/constants";
 
@@ -17,7 +16,6 @@ export const isDarkThemePreferred = () => {
 
     return localStorageDark;
   } catch (e) {
-    Bugsnag.notify(e);
     return false;
   }
 };

@@ -4,7 +4,6 @@ import { ErrorBoundary } from "react-error-boundary";
 
 import Error from "components/error/Error/Error";
 import Layout from "components/global/Layout/Layout";
-import { ErrorBoundary as BugsnagErrorBoundary } from "config/bugsnag.config";
 import Providers from "containers/Providers/Providers";
 
 declare global {
@@ -23,12 +22,6 @@ const App: React.FC<Props> = props => {
       </Layout>
     </Providers>
   );
-
-  if (!BugsnagErrorBoundary) {
-    return <ErrorBoundary FallbackComponent={Error}>{app}</ErrorBoundary>;
-  }
-
-  return <BugsnagErrorBoundary>{app}</BugsnagErrorBoundary>;
 };
 
 export default App;
