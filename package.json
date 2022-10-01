@@ -3,18 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "next dev",
-    "dev": "yarn start",
-    "build": "next build",
-    "lint": "eslint --ignore-path .gitignore --ignore-pattern !cypress/.eslintrc.js --ext .js,jsx,.ts,.tsx .",
-    "test": "jest --watchAll",
-    "test:ci": "cross-env CI=true jest --runInBand",
-    "test:all": "yarn test --watchAll=false --coverage",
-    "check-types": "tsc",
-    "prettier": "prettier --ignore-path .gitignore \"**/*.+(js|jsx|ts|tsx|json|css|scss|html)\"",
-    "format": "yarn prettier --write",
-    "check-format": "yarn prettier --list-different",
-    "deploy": "npx vercel"
+    "start": "next start",
+    "dev": "next dev",
+    "build": "next build && next export"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^1.2.26",
