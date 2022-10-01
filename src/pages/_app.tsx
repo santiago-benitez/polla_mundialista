@@ -22,6 +22,8 @@ const App: React.FC<Props> = props => {
       </Layout>
     </Providers>
   );
+
+  return <ErrorBoundary FallbackComponent={Error}>{app}</ErrorBoundary>;
 };
 
 export default App;
