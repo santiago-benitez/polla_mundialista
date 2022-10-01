@@ -13,11 +13,13 @@ export const onCreatePollaMundialista = /* GraphQL */ `
       thirdPrize
       fourthPrize
       fifthPrize
-      tournamentId
       tournament {
         id
         name
         descpription
+        pollasMundialistas {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -30,11 +32,13 @@ export const onCreatePollaMundialista = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          pollaMundialistaPollaSubscriptionsId
         }
         nextToken
       }
       createdAt
       updatedAt
+      tournamentPollasMundialistasId
     }
   }
 `;
@@ -49,11 +53,13 @@ export const onUpdatePollaMundialista = /* GraphQL */ `
       thirdPrize
       fourthPrize
       fifthPrize
-      tournamentId
       tournament {
         id
         name
         descpription
+        pollasMundialistas {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -66,11 +72,13 @@ export const onUpdatePollaMundialista = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          pollaMundialistaPollaSubscriptionsId
         }
         nextToken
       }
       createdAt
       updatedAt
+      tournamentPollasMundialistasId
     }
   }
 `;
@@ -85,11 +93,13 @@ export const onDeletePollaMundialista = /* GraphQL */ `
       thirdPrize
       fourthPrize
       fifthPrize
-      tournamentId
       tournament {
         id
         name
         descpription
+        pollasMundialistas {
+          nextToken
+        }
         createdAt
         updatedAt
       }
@@ -102,11 +112,13 @@ export const onDeletePollaMundialista = /* GraphQL */ `
           status
           createdAt
           updatedAt
+          pollaMundialistaPollaSubscriptionsId
         }
         nextToken
       }
       createdAt
       updatedAt
+      tournamentPollasMundialistasId
     }
   }
 `;
@@ -116,6 +128,22 @@ export const onCreateTournament = /* GraphQL */ `
       id
       name
       descpription
+      pollasMundialistas {
+        items {
+          id
+          name
+          subscriptionPrice
+          firstPrize
+          secondPrize
+          thirdPrize
+          fourthPrize
+          fifthPrize
+          createdAt
+          updatedAt
+          tournamentPollasMundialistasId
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -127,6 +155,22 @@ export const onUpdateTournament = /* GraphQL */ `
       id
       name
       descpription
+      pollasMundialistas {
+        items {
+          id
+          name
+          subscriptionPrice
+          firstPrize
+          secondPrize
+          thirdPrize
+          fourthPrize
+          fifthPrize
+          createdAt
+          updatedAt
+          tournamentPollasMundialistasId
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -138,6 +182,22 @@ export const onDeleteTournament = /* GraphQL */ `
       id
       name
       descpription
+      pollasMundialistas {
+        items {
+          id
+          name
+          subscriptionPrice
+          firstPrize
+          secondPrize
+          thirdPrize
+          fourthPrize
+          fifthPrize
+          createdAt
+          updatedAt
+          tournamentPollasMundialistasId
+        }
+        nextToken
+      }
       createdAt
       updatedAt
     }
@@ -158,7 +218,6 @@ export const onCreatePollaSubscription = /* GraphQL */ `
         thirdPrize
         fourthPrize
         fifthPrize
-        tournamentId
         tournament {
           id
           name
@@ -171,11 +230,13 @@ export const onCreatePollaSubscription = /* GraphQL */ `
         }
         createdAt
         updatedAt
+        tournamentPollasMundialistasId
       }
       totalPoints
       status
       createdAt
       updatedAt
+      pollaMundialistaPollaSubscriptionsId
     }
   }
 `;
@@ -194,7 +255,6 @@ export const onUpdatePollaSubscription = /* GraphQL */ `
         thirdPrize
         fourthPrize
         fifthPrize
-        tournamentId
         tournament {
           id
           name
@@ -207,11 +267,13 @@ export const onUpdatePollaSubscription = /* GraphQL */ `
         }
         createdAt
         updatedAt
+        tournamentPollasMundialistasId
       }
       totalPoints
       status
       createdAt
       updatedAt
+      pollaMundialistaPollaSubscriptionsId
     }
   }
 `;
@@ -230,7 +292,6 @@ export const onDeletePollaSubscription = /* GraphQL */ `
         thirdPrize
         fourthPrize
         fifthPrize
-        tournamentId
         tournament {
           id
           name
@@ -243,11 +304,13 @@ export const onDeletePollaSubscription = /* GraphQL */ `
         }
         createdAt
         updatedAt
+        tournamentPollasMundialistasId
       }
       totalPoints
       status
       createdAt
       updatedAt
+      pollaMundialistaPollaSubscriptionsId
     }
   }
 `;

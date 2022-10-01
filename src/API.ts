@@ -11,7 +11,7 @@ export type CreatePollaMundialistaInput = {
   thirdPrize: number,
   fourthPrize: number,
   fifthPrize: number,
-  tournamentId: string,
+  tournamentPollasMundialistasId?: string | null,
 };
 
 export type ModelPollaMundialistaConditionInput = {
@@ -22,10 +22,10 @@ export type ModelPollaMundialistaConditionInput = {
   thirdPrize?: ModelFloatInput | null,
   fourthPrize?: ModelFloatInput | null,
   fifthPrize?: ModelFloatInput | null,
-  tournamentId?: ModelIDInput | null,
   and?: Array< ModelPollaMundialistaConditionInput | null > | null,
   or?: Array< ModelPollaMundialistaConditionInput | null > | null,
   not?: ModelPollaMundialistaConditionInput | null,
+  tournamentPollasMundialistasId?: ModelIDInput | null,
 };
 
 export type ModelStringInput = {
@@ -106,11 +106,11 @@ export type PollaMundialista = {
   thirdPrize: number,
   fourthPrize: number,
   fifthPrize: number,
-  tournamentId: string,
   tournament?: Tournament | null,
   pollaSubscriptions?: ModelPollaSubscriptionConnection | null,
   createdAt: string,
   updatedAt: string,
+  tournamentPollasMundialistasId?: string | null,
 };
 
 export type Tournament = {
@@ -118,8 +118,15 @@ export type Tournament = {
   id: string,
   name: string,
   descpription?: string | null,
+  pollasMundialistas?: ModelPollaMundialistaConnection | null,
   createdAt: string,
   updatedAt: string,
+};
+
+export type ModelPollaMundialistaConnection = {
+  __typename: "ModelPollaMundialistaConnection",
+  items:  Array<PollaMundialista | null >,
+  nextToken?: string | null,
 };
 
 export type ModelPollaSubscriptionConnection = {
@@ -138,6 +145,7 @@ export type PollaSubscription = {
   status: string,
   createdAt: string,
   updatedAt: string,
+  pollaMundialistaPollaSubscriptionsId?: string | null,
 };
 
 export type UpdatePollaMundialistaInput = {
@@ -149,7 +157,7 @@ export type UpdatePollaMundialistaInput = {
   thirdPrize?: number | null,
   fourthPrize?: number | null,
   fifthPrize?: number | null,
-  tournamentId?: string | null,
+  tournamentPollasMundialistasId?: string | null,
 };
 
 export type DeletePollaMundialistaInput = {
@@ -186,6 +194,7 @@ export type CreatePollaSubscriptionInput = {
   pollaMundialistaId: string,
   totalPoints: number,
   status: string,
+  pollaMundialistaPollaSubscriptionsId?: string | null,
 };
 
 export type ModelPollaSubscriptionConditionInput = {
@@ -196,6 +205,7 @@ export type ModelPollaSubscriptionConditionInput = {
   and?: Array< ModelPollaSubscriptionConditionInput | null > | null,
   or?: Array< ModelPollaSubscriptionConditionInput | null > | null,
   not?: ModelPollaSubscriptionConditionInput | null,
+  pollaMundialistaPollaSubscriptionsId?: ModelIDInput | null,
 };
 
 export type ModelBooleanInput = {
@@ -223,6 +233,7 @@ export type UpdatePollaSubscriptionInput = {
   pollaMundialistaId?: string | null,
   totalPoints?: number | null,
   status?: string | null,
+  pollaMundialistaPollaSubscriptionsId?: string | null,
 };
 
 export type DeletePollaSubscriptionInput = {
@@ -238,16 +249,10 @@ export type ModelPollaMundialistaFilterInput = {
   thirdPrize?: ModelFloatInput | null,
   fourthPrize?: ModelFloatInput | null,
   fifthPrize?: ModelFloatInput | null,
-  tournamentId?: ModelIDInput | null,
   and?: Array< ModelPollaMundialistaFilterInput | null > | null,
   or?: Array< ModelPollaMundialistaFilterInput | null > | null,
   not?: ModelPollaMundialistaFilterInput | null,
-};
-
-export type ModelPollaMundialistaConnection = {
-  __typename: "ModelPollaMundialistaConnection",
-  items:  Array<PollaMundialista | null >,
-  nextToken?: string | null,
+  tournamentPollasMundialistasId?: ModelIDInput | null,
 };
 
 export type ModelTournamentFilterInput = {
@@ -274,6 +279,7 @@ export type ModelPollaSubscriptionFilterInput = {
   and?: Array< ModelPollaSubscriptionFilterInput | null > | null,
   or?: Array< ModelPollaSubscriptionFilterInput | null > | null,
   not?: ModelPollaSubscriptionFilterInput | null,
+  pollaMundialistaPollaSubscriptionsId?: ModelIDInput | null,
 };
 
 export type CreatePollaMundialistaMutationVariables = {
@@ -292,12 +298,15 @@ export type CreatePollaMundialistaMutation = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -312,11 +321,13 @@ export type CreatePollaMundialistaMutation = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -336,12 +347,15 @@ export type UpdatePollaMundialistaMutation = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -356,11 +370,13 @@ export type UpdatePollaMundialistaMutation = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -380,12 +396,15 @@ export type DeletePollaMundialistaMutation = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -400,11 +419,13 @@ export type DeletePollaMundialistaMutation = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -419,6 +440,24 @@ export type CreateTournamentMutation = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -435,6 +474,24 @@ export type UpdateTournamentMutation = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -451,6 +508,24 @@ export type DeleteTournamentMutation = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -477,7 +552,6 @@ export type CreatePollaSubscriptionMutation = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -492,11 +566,13 @@ export type CreatePollaSubscriptionMutation = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
 
@@ -521,7 +597,6 @@ export type UpdatePollaSubscriptionMutation = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -536,11 +611,13 @@ export type UpdatePollaSubscriptionMutation = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
 
@@ -565,7 +642,6 @@ export type DeletePollaSubscriptionMutation = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -580,11 +656,13 @@ export type DeletePollaSubscriptionMutation = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
 
@@ -603,12 +681,15 @@ export type GetPollaMundialistaQuery = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -623,11 +704,13 @@ export type GetPollaMundialistaQuery = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -650,7 +733,6 @@ export type ListPollaMundialistasQuery = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -665,6 +747,7 @@ export type ListPollaMundialistasQuery = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -680,6 +763,24 @@ export type GetTournamentQuery = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -699,6 +800,10 @@ export type ListTournamentsQuery = {
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -726,7 +831,6 @@ export type GetPollaSubscriptionQuery = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -741,11 +845,13 @@ export type GetPollaSubscriptionQuery = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
 
@@ -773,14 +879,15 @@ export type ListPollaSubscriptionsQuery = {
         thirdPrize: number,
         fourthPrize: number,
         fifthPrize: number,
-        tournamentId: string,
         createdAt: string,
         updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
       } | null,
       totalPoints: number,
       status: string,
       createdAt: string,
       updatedAt: string,
+      pollaMundialistaPollaSubscriptionsId?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -797,12 +904,15 @@ export type OnCreatePollaMundialistaSubscription = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -817,11 +927,13 @@ export type OnCreatePollaMundialistaSubscription = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -836,12 +948,15 @@ export type OnUpdatePollaMundialistaSubscription = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -856,11 +971,13 @@ export type OnUpdatePollaMundialistaSubscription = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -875,12 +992,15 @@ export type OnDeletePollaMundialistaSubscription = {
     thirdPrize: number,
     fourthPrize: number,
     fifthPrize: number,
-    tournamentId: string,
     tournament?:  {
       __typename: "Tournament",
       id: string,
       name: string,
       descpription?: string | null,
+      pollasMundialistas?:  {
+        __typename: "ModelPollaMundialistaConnection",
+        nextToken?: string | null,
+      } | null,
       createdAt: string,
       updatedAt: string,
     } | null,
@@ -895,11 +1015,13 @@ export type OnDeletePollaMundialistaSubscription = {
         status: string,
         createdAt: string,
         updatedAt: string,
+        pollaMundialistaPollaSubscriptionsId?: string | null,
       } | null >,
       nextToken?: string | null,
     } | null,
     createdAt: string,
     updatedAt: string,
+    tournamentPollasMundialistasId?: string | null,
   } | null,
 };
 
@@ -909,6 +1031,24 @@ export type OnCreateTournamentSubscription = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -920,6 +1060,24 @@ export type OnUpdateTournamentSubscription = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -931,6 +1089,24 @@ export type OnDeleteTournamentSubscription = {
     id: string,
     name: string,
     descpription?: string | null,
+    pollasMundialistas?:  {
+      __typename: "ModelPollaMundialistaConnection",
+      items:  Array< {
+        __typename: "PollaMundialista",
+        id: string,
+        name: string,
+        subscriptionPrice: number,
+        firstPrize: number,
+        secondPrize: number,
+        thirdPrize: number,
+        fourthPrize: number,
+        fifthPrize: number,
+        createdAt: string,
+        updatedAt: string,
+        tournamentPollasMundialistasId?: string | null,
+      } | null >,
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -952,7 +1128,6 @@ export type OnCreatePollaSubscriptionSubscription = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -967,11 +1142,13 @@ export type OnCreatePollaSubscriptionSubscription = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
 
@@ -991,7 +1168,6 @@ export type OnUpdatePollaSubscriptionSubscription = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -1006,11 +1182,13 @@ export type OnUpdatePollaSubscriptionSubscription = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
 
@@ -1030,7 +1208,6 @@ export type OnDeletePollaSubscriptionSubscription = {
       thirdPrize: number,
       fourthPrize: number,
       fifthPrize: number,
-      tournamentId: string,
       tournament?:  {
         __typename: "Tournament",
         id: string,
@@ -1045,10 +1222,12 @@ export type OnDeletePollaSubscriptionSubscription = {
       } | null,
       createdAt: string,
       updatedAt: string,
+      tournamentPollasMundialistasId?: string | null,
     } | null,
     totalPoints: number,
     status: string,
     createdAt: string,
     updatedAt: string,
+    pollaMundialistaPollaSubscriptionsId?: string | null,
   } | null,
 };
