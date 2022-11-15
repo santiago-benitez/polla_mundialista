@@ -154,11 +154,19 @@ export const createPollaSubscription = /* GraphQL */ `
       subscriptionGroups {
         items {
           id
+          matchesPlayed
+          points
+          goalsFor
+          goalsAgainst
+          goalsDifference
+          position
+          subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionGroupsId
           roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
+          groupSubscriptionGroupTeamsId
+          teamSubscriptionGroupTeamsId
         }
         nextToken
       }
@@ -229,11 +237,19 @@ export const updatePollaSubscription = /* GraphQL */ `
       subscriptionGroups {
         items {
           id
+          matchesPlayed
+          points
+          goalsFor
+          goalsAgainst
+          goalsDifference
+          position
+          subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionGroupsId
           roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
+          groupSubscriptionGroupTeamsId
+          teamSubscriptionGroupTeamsId
         }
         nextToken
       }
@@ -304,11 +320,19 @@ export const deletePollaSubscription = /* GraphQL */ `
       subscriptionGroups {
         items {
           id
+          matchesPlayed
+          points
+          goalsFor
+          goalsAgainst
+          goalsDifference
+          position
+          subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionGroupsId
           roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
+          groupSubscriptionGroupTeamsId
+          teamSubscriptionGroupTeamsId
         }
         nextToken
       }
@@ -515,11 +539,19 @@ export const createRound = /* GraphQL */ `
       subscriptionGroups {
         items {
           id
+          matchesPlayed
+          points
+          goalsFor
+          goalsAgainst
+          goalsDifference
+          position
+          subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionGroupsId
           roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
+          groupSubscriptionGroupTeamsId
+          teamSubscriptionGroupTeamsId
         }
         nextToken
       }
@@ -569,11 +601,19 @@ export const updateRound = /* GraphQL */ `
       subscriptionGroups {
         items {
           id
+          matchesPlayed
+          points
+          goalsFor
+          goalsAgainst
+          goalsDifference
+          position
+          subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionGroupsId
           roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
+          groupSubscriptionGroupTeamsId
+          teamSubscriptionGroupTeamsId
         }
         nextToken
       }
@@ -623,11 +663,19 @@ export const deleteRound = /* GraphQL */ `
       subscriptionGroups {
         items {
           id
+          matchesPlayed
+          points
+          goalsFor
+          goalsAgainst
+          goalsDifference
+          position
+          subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionGroupsId
           roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
+          groupSubscriptionGroupTeamsId
+          teamSubscriptionGroupTeamsId
         }
         nextToken
       }
@@ -699,17 +747,6 @@ export const createGroup = /* GraphQL */ `
         }
         nextToken
       }
-      subscriptionGroups {
-        items {
-          id
-          createdAt
-          updatedAt
-          pollaSubscriptionSubscriptionGroupsId
-          roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
-        }
-        nextToken
-      }
       subscriptionGroupTeams {
         items {
           id
@@ -722,8 +759,9 @@ export const createGroup = /* GraphQL */ `
           subscriptionPoints
           createdAt
           updatedAt
+          pollaSubscriptionSubscriptionGroupsId
+          roundSubscriptionGroupsId
           groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
           teamSubscriptionGroupTeamsId
         }
         nextToken
@@ -753,9 +791,6 @@ export const createGroup = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -810,9 +845,6 @@ export const createGroup = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -908,17 +940,6 @@ export const updateGroup = /* GraphQL */ `
         }
         nextToken
       }
-      subscriptionGroups {
-        items {
-          id
-          createdAt
-          updatedAt
-          pollaSubscriptionSubscriptionGroupsId
-          roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
-        }
-        nextToken
-      }
       subscriptionGroupTeams {
         items {
           id
@@ -931,8 +952,9 @@ export const updateGroup = /* GraphQL */ `
           subscriptionPoints
           createdAt
           updatedAt
+          pollaSubscriptionSubscriptionGroupsId
+          roundSubscriptionGroupsId
           groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
           teamSubscriptionGroupTeamsId
         }
         nextToken
@@ -962,9 +984,6 @@ export const updateGroup = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -1019,9 +1038,6 @@ export const updateGroup = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -1117,17 +1133,6 @@ export const deleteGroup = /* GraphQL */ `
         }
         nextToken
       }
-      subscriptionGroups {
-        items {
-          id
-          createdAt
-          updatedAt
-          pollaSubscriptionSubscriptionGroupsId
-          roundSubscriptionGroupsId
-          groupSubscriptionGroupsId
-        }
-        nextToken
-      }
       subscriptionGroupTeams {
         items {
           id
@@ -1140,8 +1145,9 @@ export const deleteGroup = /* GraphQL */ `
           subscriptionPoints
           createdAt
           updatedAt
+          pollaSubscriptionSubscriptionGroupsId
+          roundSubscriptionGroupsId
           groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
           teamSubscriptionGroupTeamsId
         }
         nextToken
@@ -1171,9 +1177,6 @@ export const deleteGroup = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -1230,9 +1233,6 @@ export const deleteGroup = /* GraphQL */ `
         groupTeams {
           nextToken
         }
-        subscriptionGroups {
-          nextToken
-        }
         subscriptionGroupTeams {
           nextToken
         }
@@ -1280,435 +1280,6 @@ export const deleteGroup = /* GraphQL */ `
     }
   }
 `;
-export const createSubscriptionGroup = /* GraphQL */ `
-  mutation CreateSubscriptionGroup(
-    $input: CreateSubscriptionGroupInput!
-    $condition: ModelSubscriptionGroupConditionInput
-  ) {
-    createSubscriptionGroup(input: $input, condition: $condition) {
-      id
-      round {
-        id
-        name
-        tournament {
-          id
-          name
-          descpription
-          createdAt
-          updatedAt
-        }
-        subscriptionGroups {
-          nextToken
-        }
-        status
-        groups {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        tournamentRoundsId
-      }
-      group {
-        id
-        name
-        round {
-          id
-          name
-          status
-          createdAt
-          updatedAt
-          tournamentRoundsId
-        }
-        status
-        groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
-          nextToken
-        }
-        subscriptionGroupTeams {
-          nextToken
-        }
-        matches {
-          nextToken
-        }
-        teamA {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        teamAPosition
-        teamB {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        teamBPosition
-        createdAt
-        updatedAt
-        roundGroupsId
-        groupTeamAId
-        groupTeamBId
-      }
-      subscription {
-        id
-        isAdmin
-        subscriptionGroups {
-          nextToken
-        }
-        subscriptionMatches {
-          nextToken
-        }
-        subscriptionBonuses {
-          nextToken
-        }
-        pollaMundialista {
-          id
-          name
-          subscriptionPrice
-          firstPrize
-          secondPrize
-          thirdPrize
-          fourthPrize
-          fifthPrize
-          createdAt
-          updatedAt
-          tournamentPollasMundialistasId
-        }
-        totalPoints
-        status
-        userId
-        email
-        createdAt
-        updatedAt
-        pollaMundialistaPollaSubscriptionsId
-      }
-      subscriptionGroupTeams {
-        items {
-          id
-          matchesPlayed
-          points
-          goalsFor
-          goalsAgainst
-          goalsDifference
-          position
-          subscriptionPoints
-          createdAt
-          updatedAt
-          groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
-          teamSubscriptionGroupTeamsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-      pollaSubscriptionSubscriptionGroupsId
-      roundSubscriptionGroupsId
-      groupSubscriptionGroupsId
-    }
-  }
-`;
-export const updateSubscriptionGroup = /* GraphQL */ `
-  mutation UpdateSubscriptionGroup(
-    $input: UpdateSubscriptionGroupInput!
-    $condition: ModelSubscriptionGroupConditionInput
-  ) {
-    updateSubscriptionGroup(input: $input, condition: $condition) {
-      id
-      round {
-        id
-        name
-        tournament {
-          id
-          name
-          descpription
-          createdAt
-          updatedAt
-        }
-        subscriptionGroups {
-          nextToken
-        }
-        status
-        groups {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        tournamentRoundsId
-      }
-      group {
-        id
-        name
-        round {
-          id
-          name
-          status
-          createdAt
-          updatedAt
-          tournamentRoundsId
-        }
-        status
-        groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
-          nextToken
-        }
-        subscriptionGroupTeams {
-          nextToken
-        }
-        matches {
-          nextToken
-        }
-        teamA {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        teamAPosition
-        teamB {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        teamBPosition
-        createdAt
-        updatedAt
-        roundGroupsId
-        groupTeamAId
-        groupTeamBId
-      }
-      subscription {
-        id
-        isAdmin
-        subscriptionGroups {
-          nextToken
-        }
-        subscriptionMatches {
-          nextToken
-        }
-        subscriptionBonuses {
-          nextToken
-        }
-        pollaMundialista {
-          id
-          name
-          subscriptionPrice
-          firstPrize
-          secondPrize
-          thirdPrize
-          fourthPrize
-          fifthPrize
-          createdAt
-          updatedAt
-          tournamentPollasMundialistasId
-        }
-        totalPoints
-        status
-        userId
-        email
-        createdAt
-        updatedAt
-        pollaMundialistaPollaSubscriptionsId
-      }
-      subscriptionGroupTeams {
-        items {
-          id
-          matchesPlayed
-          points
-          goalsFor
-          goalsAgainst
-          goalsDifference
-          position
-          subscriptionPoints
-          createdAt
-          updatedAt
-          groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
-          teamSubscriptionGroupTeamsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-      pollaSubscriptionSubscriptionGroupsId
-      roundSubscriptionGroupsId
-      groupSubscriptionGroupsId
-    }
-  }
-`;
-export const deleteSubscriptionGroup = /* GraphQL */ `
-  mutation DeleteSubscriptionGroup(
-    $input: DeleteSubscriptionGroupInput!
-    $condition: ModelSubscriptionGroupConditionInput
-  ) {
-    deleteSubscriptionGroup(input: $input, condition: $condition) {
-      id
-      round {
-        id
-        name
-        tournament {
-          id
-          name
-          descpription
-          createdAt
-          updatedAt
-        }
-        subscriptionGroups {
-          nextToken
-        }
-        status
-        groups {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        tournamentRoundsId
-      }
-      group {
-        id
-        name
-        round {
-          id
-          name
-          status
-          createdAt
-          updatedAt
-          tournamentRoundsId
-        }
-        status
-        groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
-          nextToken
-        }
-        subscriptionGroupTeams {
-          nextToken
-        }
-        matches {
-          nextToken
-        }
-        teamA {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        teamAPosition
-        teamB {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        teamBPosition
-        createdAt
-        updatedAt
-        roundGroupsId
-        groupTeamAId
-        groupTeamBId
-      }
-      subscription {
-        id
-        isAdmin
-        subscriptionGroups {
-          nextToken
-        }
-        subscriptionMatches {
-          nextToken
-        }
-        subscriptionBonuses {
-          nextToken
-        }
-        pollaMundialista {
-          id
-          name
-          subscriptionPrice
-          firstPrize
-          secondPrize
-          thirdPrize
-          fourthPrize
-          fifthPrize
-          createdAt
-          updatedAt
-          tournamentPollasMundialistasId
-        }
-        totalPoints
-        status
-        userId
-        email
-        createdAt
-        updatedAt
-        pollaMundialistaPollaSubscriptionsId
-      }
-      subscriptionGroupTeams {
-        items {
-          id
-          matchesPlayed
-          points
-          goalsFor
-          goalsAgainst
-          goalsDifference
-          position
-          subscriptionPoints
-          createdAt
-          updatedAt
-          groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
-          teamSubscriptionGroupTeamsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-      pollaSubscriptionSubscriptionGroupsId
-      roundSubscriptionGroupsId
-      groupSubscriptionGroupsId
-    }
-  }
-`;
 export const createGroupTeam = /* GraphQL */ `
   mutation CreateGroupTeam(
     $input: CreateGroupTeamInput!
@@ -1729,9 +1300,6 @@ export const createGroupTeam = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -1836,9 +1404,6 @@ export const updateGroupTeam = /* GraphQL */ `
         groupTeams {
           nextToken
         }
-        subscriptionGroups {
-          nextToken
-        }
         subscriptionGroupTeams {
           nextToken
         }
@@ -1939,9 +1504,6 @@ export const deleteGroupTeam = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -2091,8 +1653,9 @@ export const createTeam = /* GraphQL */ `
           subscriptionPoints
           createdAt
           updatedAt
+          pollaSubscriptionSubscriptionGroupsId
+          roundSubscriptionGroupsId
           groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
           teamSubscriptionGroupTeamsId
         }
         nextToken
@@ -2193,8 +1756,9 @@ export const updateTeam = /* GraphQL */ `
           subscriptionPoints
           createdAt
           updatedAt
+          pollaSubscriptionSubscriptionGroupsId
+          roundSubscriptionGroupsId
           groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
           teamSubscriptionGroupTeamsId
         }
         nextToken
@@ -2295,8 +1859,9 @@ export const deleteTeam = /* GraphQL */ `
           subscriptionPoints
           createdAt
           updatedAt
+          pollaSubscriptionSubscriptionGroupsId
+          roundSubscriptionGroupsId
           groupSubscriptionGroupTeamsId
-          subscriptionGroupSubscriptionGroupTeamsId
           teamSubscriptionGroupTeamsId
         }
         nextToken
@@ -2363,9 +1928,6 @@ export const createMatch = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -2473,9 +2035,6 @@ export const updateMatch = /* GraphQL */ `
         groupTeams {
           nextToken
         }
-        subscriptionGroups {
-          nextToken
-        }
         subscriptionGroupTeams {
           nextToken
         }
@@ -2579,9 +2138,6 @@ export const deleteMatch = /* GraphQL */ `
         }
         status
         groupTeams {
-          nextToken
-        }
-        subscriptionGroups {
           nextToken
         }
         subscriptionGroupTeams {
@@ -3186,9 +2742,6 @@ export const createSubscriptionGroupTeam = /* GraphQL */ `
         groupTeams {
           nextToken
         }
-        subscriptionGroups {
-          nextToken
-        }
         subscriptionGroupTeams {
           nextToken
         }
@@ -3227,48 +2780,6 @@ export const createSubscriptionGroupTeam = /* GraphQL */ `
         groupTeamAId
         groupTeamBId
       }
-      subscriptionGroup {
-        id
-        round {
-          id
-          name
-          status
-          createdAt
-          updatedAt
-          tournamentRoundsId
-        }
-        group {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        subscription {
-          id
-          isAdmin
-          totalPoints
-          status
-          userId
-          email
-          createdAt
-          updatedAt
-          pollaMundialistaPollaSubscriptionsId
-        }
-        subscriptionGroupTeams {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        pollaSubscriptionSubscriptionGroupsId
-        roundSubscriptionGroupsId
-        groupSubscriptionGroupsId
-      }
       team {
         id
         name
@@ -3298,6 +2809,60 @@ export const createSubscriptionGroupTeam = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      round {
+        id
+        name
+        tournament {
+          id
+          name
+          descpription
+          createdAt
+          updatedAt
+        }
+        subscriptionGroups {
+          nextToken
+        }
+        status
+        groups {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        tournamentRoundsId
+      }
+      subscription {
+        id
+        isAdmin
+        subscriptionGroups {
+          nextToken
+        }
+        subscriptionMatches {
+          nextToken
+        }
+        subscriptionBonuses {
+          nextToken
+        }
+        pollaMundialista {
+          id
+          name
+          subscriptionPrice
+          firstPrize
+          secondPrize
+          thirdPrize
+          fourthPrize
+          fifthPrize
+          createdAt
+          updatedAt
+          tournamentPollasMundialistasId
+        }
+        totalPoints
+        status
+        userId
+        email
+        createdAt
+        updatedAt
+        pollaMundialistaPollaSubscriptionsId
+      }
       matchesPlayed
       points
       goalsFor
@@ -3307,8 +2872,9 @@ export const createSubscriptionGroupTeam = /* GraphQL */ `
       subscriptionPoints
       createdAt
       updatedAt
+      pollaSubscriptionSubscriptionGroupsId
+      roundSubscriptionGroupsId
       groupSubscriptionGroupTeamsId
-      subscriptionGroupSubscriptionGroupTeamsId
       teamSubscriptionGroupTeamsId
     }
   }
@@ -3335,9 +2901,6 @@ export const updateSubscriptionGroupTeam = /* GraphQL */ `
         groupTeams {
           nextToken
         }
-        subscriptionGroups {
-          nextToken
-        }
         subscriptionGroupTeams {
           nextToken
         }
@@ -3376,48 +2939,6 @@ export const updateSubscriptionGroupTeam = /* GraphQL */ `
         groupTeamAId
         groupTeamBId
       }
-      subscriptionGroup {
-        id
-        round {
-          id
-          name
-          status
-          createdAt
-          updatedAt
-          tournamentRoundsId
-        }
-        group {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        subscription {
-          id
-          isAdmin
-          totalPoints
-          status
-          userId
-          email
-          createdAt
-          updatedAt
-          pollaMundialistaPollaSubscriptionsId
-        }
-        subscriptionGroupTeams {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        pollaSubscriptionSubscriptionGroupsId
-        roundSubscriptionGroupsId
-        groupSubscriptionGroupsId
-      }
       team {
         id
         name
@@ -3447,6 +2968,60 @@ export const updateSubscriptionGroupTeam = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      round {
+        id
+        name
+        tournament {
+          id
+          name
+          descpription
+          createdAt
+          updatedAt
+        }
+        subscriptionGroups {
+          nextToken
+        }
+        status
+        groups {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        tournamentRoundsId
+      }
+      subscription {
+        id
+        isAdmin
+        subscriptionGroups {
+          nextToken
+        }
+        subscriptionMatches {
+          nextToken
+        }
+        subscriptionBonuses {
+          nextToken
+        }
+        pollaMundialista {
+          id
+          name
+          subscriptionPrice
+          firstPrize
+          secondPrize
+          thirdPrize
+          fourthPrize
+          fifthPrize
+          createdAt
+          updatedAt
+          tournamentPollasMundialistasId
+        }
+        totalPoints
+        status
+        userId
+        email
+        createdAt
+        updatedAt
+        pollaMundialistaPollaSubscriptionsId
+      }
       matchesPlayed
       points
       goalsFor
@@ -3456,8 +3031,9 @@ export const updateSubscriptionGroupTeam = /* GraphQL */ `
       subscriptionPoints
       createdAt
       updatedAt
+      pollaSubscriptionSubscriptionGroupsId
+      roundSubscriptionGroupsId
       groupSubscriptionGroupTeamsId
-      subscriptionGroupSubscriptionGroupTeamsId
       teamSubscriptionGroupTeamsId
     }
   }
@@ -3484,9 +3060,6 @@ export const deleteSubscriptionGroupTeam = /* GraphQL */ `
         groupTeams {
           nextToken
         }
-        subscriptionGroups {
-          nextToken
-        }
         subscriptionGroupTeams {
           nextToken
         }
@@ -3525,48 +3098,6 @@ export const deleteSubscriptionGroupTeam = /* GraphQL */ `
         groupTeamAId
         groupTeamBId
       }
-      subscriptionGroup {
-        id
-        round {
-          id
-          name
-          status
-          createdAt
-          updatedAt
-          tournamentRoundsId
-        }
-        group {
-          id
-          name
-          status
-          teamAPosition
-          teamBPosition
-          createdAt
-          updatedAt
-          roundGroupsId
-          groupTeamAId
-          groupTeamBId
-        }
-        subscription {
-          id
-          isAdmin
-          totalPoints
-          status
-          userId
-          email
-          createdAt
-          updatedAt
-          pollaMundialistaPollaSubscriptionsId
-        }
-        subscriptionGroupTeams {
-          nextToken
-        }
-        createdAt
-        updatedAt
-        pollaSubscriptionSubscriptionGroupsId
-        roundSubscriptionGroupsId
-        groupSubscriptionGroupsId
-      }
       team {
         id
         name
@@ -3596,6 +3127,60 @@ export const deleteSubscriptionGroupTeam = /* GraphQL */ `
         createdAt
         updatedAt
       }
+      round {
+        id
+        name
+        tournament {
+          id
+          name
+          descpription
+          createdAt
+          updatedAt
+        }
+        subscriptionGroups {
+          nextToken
+        }
+        status
+        groups {
+          nextToken
+        }
+        createdAt
+        updatedAt
+        tournamentRoundsId
+      }
+      subscription {
+        id
+        isAdmin
+        subscriptionGroups {
+          nextToken
+        }
+        subscriptionMatches {
+          nextToken
+        }
+        subscriptionBonuses {
+          nextToken
+        }
+        pollaMundialista {
+          id
+          name
+          subscriptionPrice
+          firstPrize
+          secondPrize
+          thirdPrize
+          fourthPrize
+          fifthPrize
+          createdAt
+          updatedAt
+          tournamentPollasMundialistasId
+        }
+        totalPoints
+        status
+        userId
+        email
+        createdAt
+        updatedAt
+        pollaMundialistaPollaSubscriptionsId
+      }
       matchesPlayed
       points
       goalsFor
@@ -3605,8 +3190,9 @@ export const deleteSubscriptionGroupTeam = /* GraphQL */ `
       subscriptionPoints
       createdAt
       updatedAt
+      pollaSubscriptionSubscriptionGroupsId
+      roundSubscriptionGroupsId
       groupSubscriptionGroupTeamsId
-      subscriptionGroupSubscriptionGroupTeamsId
       teamSubscriptionGroupTeamsId
     }
   }

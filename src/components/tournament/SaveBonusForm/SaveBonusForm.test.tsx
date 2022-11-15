@@ -1,12 +1,12 @@
 import React from "react";
 
 import { render } from "setupTests";
-import CreateTournamentForm from "./CreateTournamentForm";
+import SaveBonusForm from "./SaveBonusForm";
 
-describe("CreateTournamentForm", () => {
+describe("SaveBonusForm", () => {
   it("renders with default props", () => {
     render(
-      <CreateTournamentForm
+      <SaveBonusForm
         open={true}
         onCreate={() => {}}
         onCancel={() => {}}

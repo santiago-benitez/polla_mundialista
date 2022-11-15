@@ -1,10 +1,7 @@
 import { API } from "aws-amplify";
 import * as mutations from "../graphql/mutations";
 import { CreatePollaSubscriptionInput, PollaMundialista } from "../API";
-import {
-  createSubscriptionBundleService,
-  createSubscriptionService
-} from "./subscription.service";
+import { createSubscriptionService } from "./subscription.service";
 
 export const createPollaMundialistaService = async (
   pollaMundialista: Partial<PollaMundialista>,
@@ -27,7 +24,6 @@ export const createPollaMundialistaService = async (
     userId,
     email
   };
-  const newSubscription = await createSubscriptionService(subscriptionInput);
-  // 3.- create subscription bundle
-  await createSubscriptionBundleService(newSubscription);
+  console.log("HEEEY");
+  await createSubscriptionService(subscriptionInput);
 };

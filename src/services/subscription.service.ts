@@ -1,7 +1,6 @@
 import { API } from "aws-amplify";
 import {
   CreatePollaSubscriptionInput,
-  CreateSubscriptionGroupInput,
   CreateSubscriptionGroupTeamInput,
   CreateSubscriptionMatchInput,
   CreateSubscriptionMatchTeamInput,
@@ -9,7 +8,6 @@ import {
   Match,
   PollaSubscription,
   Round,
-  SubscriptionGroup,
   SubscriptionMatch,
   Tournament
 } from "../API";
@@ -53,22 +51,6 @@ export const createSubscriptionBundleService = async (
           if (groups) {
             for (const group of groups) {
               if (group) {
-                const subscriptionGroupInput: CreateSubscriptionGroupInput = {
-                  pollaSubscriptionSubscriptionGroupsId: subscription.id,
-                  roundSubscriptionGroupsId: round.id,
-                  groupSubscriptionGroupsId: group.id
-                };
-                // 3.- Create group subscription
-                const newSubscriptionGroupResult: any = await API.graphql({
-                  query: mutations.createSubscriptionGroup,
-                  variables: { input: subscriptionGroupInput }
-                });
-                const newSubscriptionGroup: SubscriptionGroup =
-                  newSubscriptionGroupResult.data.createSubscriptionGroup;
-                console.log(
-                  "new subscription group created: ",
-                  newSubscriptionGroup.id
-                );
                 // 4.- Retrieve groups
                 const getGroupResult: any = await API.graphql({
                   query: queries.getGroup,
@@ -89,8 +71,6 @@ export const createSubscriptionBundleService = async (
                           position: groupTeam.position,
                           subscriptionPoints: 0,
                           groupSubscriptionGroupTeamsId: group.id,
-                          subscriptionGroupSubscriptionGroupTeamsId:
-                            newSubscriptionGroup.id,
                           teamSubscriptionGroupTeamsId: groupTeam.team?.id
                         };
                       // 5.- Create subscription group team

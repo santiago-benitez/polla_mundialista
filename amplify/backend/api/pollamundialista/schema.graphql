@@ -19,7 +19,7 @@ type PollaMundialista @model {
 type PollaSubscription @model {
   id: ID!
   isAdmin: Boolean!
-  subscriptionGroups: [SubscriptionGroup] @hasMany
+  subscriptionGroups: [SubscriptionGroupTeam] @hasMany
   subscriptionMatches: [SubscriptionMatch] @hasMany
   subscriptionBonuses: [SubscriptionBonus] @hasMany
   pollaMundialista: PollaMundialista @belongsTo
@@ -40,7 +40,7 @@ type Round @model {
   id: ID!
   name: String!
   tournament: Tournament @belongsTo
-  subscriptionGroups: [SubscriptionGroup] @hasMany
+  subscriptionGroups: [SubscriptionGroupTeam] @hasMany
   status: String!
   groups: [Group] @hasMany
 }
@@ -51,21 +51,12 @@ type Group @model {
   round: Round @belongsTo
   status: String!
   groupTeams: [GroupTeam] @hasMany
-  subscriptionGroups: [SubscriptionGroup] @hasMany
   subscriptionGroupTeams: [SubscriptionGroupTeam] @hasMany
   matches: [Match] @hasMany
   teamA: Group @hasOne
   teamAPosition: Int
   teamB: Group @hasOne
   teamBPosition: Int
-}
-
-type SubscriptionGroup @model {
-  id: ID!
-  round: Round @belongsTo
-  group: Group @belongsTo
-  subscription: PollaSubscription @belongsTo
-  subscriptionGroupTeams: [SubscriptionGroupTeam] @hasMany
 }
 
 type GroupTeam @model {
@@ -138,8 +129,9 @@ type Player @model {
 type SubscriptionGroupTeam @model {
   id: ID!
   group: Group @belongsTo
-  subscriptionGroup: SubscriptionGroup @belongsTo
   team: Team @belongsTo
+  round: Round @belongsTo
+  subscription: PollaSubscription @belongsTo
   matchesPlayed: Int!
   points: Int!
   goalsFor: Int!
