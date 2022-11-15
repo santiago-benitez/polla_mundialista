@@ -11,16 +11,7 @@ const ECUADOR = {
 
 const CONSTANTS = {
   // HTML title tag text (Useful to display the brand name for SEO)
-  TITLE: "Next boilerplate",
-  // Project configurations
-  ARTISN: {
-    // Default country
-    DEFAULT_COUNTRY: ECUADOR,
-    // Catalogues
-    COUNTRIES: [ECUADOR],
-    // The types of the goods being sold (Useful for analytics)
-    CONTENT_TYPE: "food"
-  },
+  TITLE: "Super Polla Mundialista",
   // REST API configurations
   API: {
     // API url

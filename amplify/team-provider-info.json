@@ -1,23 +1,30 @@
 {
-    "dev": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-pollamundialista-dev-175351-authRole",
-            "UnauthRoleArn": "arn:aws:iam::501878680001:role/amplify-pollamundialista-dev-175351-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::501878680001:role/amplify-pollamundialista-dev-175351-authRole",
-            "Region": "us-east-1",
-            "DeploymentBucketName": "amplify-pollamundialista-dev-175351-deployment",
-            "UnauthRoleName": "amplify-pollamundialista-dev-175351-unauthRole",
-            "StackName": "amplify-pollamundialista-dev-175351",
-            "StackId": "arn:aws:cloudformation:us-east-1:501878680001:stack/amplify-pollamundialista-dev-175351/eb8ddea0-41db-11ed-a449-1277a47e4127",
-            "AmplifyAppId": "d1qi2d1zl8qkdm"
-        },
-        "categories": {
-            "hosting": {
-                "amplifyhosting": {
-                    "appId": "d1qi2d1zl8qkdm",
-                    "type": "manual"
-                }
-            }
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-pollamundialista-dev-175351-authRole",
+      "UnauthRoleArn": "arn:aws:iam::501878680001:role/amplify-pollamundialista-dev-175351-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::501878680001:role/amplify-pollamundialista-dev-175351-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-pollamundialista-dev-175351-deployment",
+      "UnauthRoleName": "amplify-pollamundialista-dev-175351-unauthRole",
+      "StackName": "amplify-pollamundialista-dev-175351",
+      "StackId": "arn:aws:cloudformation:us-east-1:501878680001:stack/amplify-pollamundialista-dev-175351/eb8ddea0-41db-11ed-a449-1277a47e4127",
+      "AmplifyAppId": "d1qi2d1zl8qkdm"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d1qi2d1zl8qkdm",
+          "type": "manual"
         }
+      },
+      "auth": {
+        "pollamundialistaf147637c": {},
+        "pollamundialista28aec992": {}
+      },
+      "api": {
+        "pollamundialista": {}
+      }
     }
+  }
 }

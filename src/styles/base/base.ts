@@ -17,7 +17,7 @@ const base = css`
   }
 
   html {
-    font-size: 62.5%; //16px default to 10px
+    font-size: 100%; //16px default to 10px
     width: 100%;
     height: 100%;
 
@@ -42,28 +42,10 @@ const base = css`
   }
 
   #__next > .Layout > * {
-    display: grid;
-    grid-template-columns: var(--sizes-page-columns);
-    grid-template-rows: [header] auto [main] 1fr [footer] auto;
+    display: flex;
     min-width: var(--sizes-page-minWidth);
     max-width: var(--sizes-page-maxWidth);
     min-height: var(--sizes-page-minHeight);
-
-    & > :is(header, main, footer) {
-      grid-column: start / end;
-    }
-
-    & > header {
-      grid-row: header;
-    }
-
-    & > main {
-      grid-row: main;
-    }
-
-    & > footer {
-      grid-row: footer;
-    }
   }
 
   a {
@@ -92,6 +74,10 @@ const base = css`
       scroll-behavior: auto !important;
     }
   }
+
+  /* .amplify-button--primary {
+    background-color: red;
+  } */
   /* Normalization END */
 `;
 

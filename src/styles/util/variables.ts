@@ -1,6 +1,18 @@
 import { lighten } from "polished";
 
-const primary = "hsla(357, 96%, 65%, 1)";
+const primary = "#6C1E38";
+
+const amplify = {
+  components: {
+    button: {
+      primary: {
+        background: {
+          color: "#6C1E38"
+        }
+      }
+    }
+  }
+};
 
 const palette = {
   primary,
@@ -46,5 +58,5 @@ const sizes = {
   }
 };
 
-const variables = { palette, sizes };
+const variables = { palette, sizes, amplify };
 export default variables;

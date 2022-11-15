@@ -31,40 +31,40 @@ module.exports = {
         specialLink: ["hrefLeft", "hrefRight"],
         aspects: ["invalidHref", "preferButton"]
       }
-    ],
-    "import/order": [
-      "error",
-      {
-        groups: [
-          ["builtin", "external"],
-          ["internal", "parent", "sibling", "index"],
-          ["object"]
-        ],
-        pathGroups: [
-          ...setAssetsImportRule([
-            "*.svg",
-            "*.png",
-            "*.jpg",
-            "*.jpeg",
-            "*.gif",
-            "*.webp",
-            "*.avif",
-            "*.json",
-            "*.md",
-            "*.txt",
-            "*.tif",
-            "*.tiff",
-            "*.woff",
-            "*.woff2"
-          ])
-        ],
-        "newlines-between": "always",
-        alphabetize: {
-          order: "asc",
-          caseInsensitive: false
-        }
-      }
     ]
+    //   "import/order": [
+    //     "error",
+    //     {
+    //       groups: [
+    //         ["builtin", "external"],
+    //         ["internal", "parent", "sibling", "index"],
+    //         ["object"]
+    //       ],
+    //       pathGroups: [
+    //         ...setAssetsImportRule([
+    //           "*.svg",
+    //           "*.png",
+    //           "*.jpg",
+    //           "*.jpeg",
+    //           "*.gif",
+    //           "*.webp",
+    //           "*.avif",
+    //           "*.json",
+    //           "*.md",
+    //           "*.txt",
+    //           "*.tif",
+    //           "*.tiff",
+    //           "*.woff",
+    //           "*.woff2"
+    //         ])
+    //       ],
+    //       "newlines-between": "always",
+    //       alphabetize: {
+    //         order: "asc",
+    //         caseInsensitive: false
+    //       }
+    //     }
+    //   ]
   },
   env: {
     browser: true,
