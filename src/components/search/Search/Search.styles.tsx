@@ -6,6 +6,7 @@ const SearchStyled = styled.div<Props>`
   .Search {
     &__header {
       display: flex;
+      padding-left: 0.5rem;
       justify-content: space-between;
       align-items: center;
       background-color: white;

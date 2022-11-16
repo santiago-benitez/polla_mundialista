@@ -24,12 +24,14 @@ import { CreateTournamentFormValues } from "../CreateTournamentForm/CreateTourna
 import { createPollaMundialistaService } from "../../../services/pollaMundialista.service";
 import { CreatePollaSubscriptionInput, PollaMundialista } from "../../../API";
 import { createSubscriptionService } from "../../../services/subscription.service";
+import { HomeOutlined, FileSearchOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
 const SearchInput = Input.Search;
 
 const Search: React.FC<Props> = props => {
   const { signOut, user } = useAuthenticator(context => [context.user]);
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const router = useRouter();
   const [pollasMundialistas, setPollasMundialistas] = useState([]);
   const [filteredPollas, setFilteredPollas] = useState([]);
@@ -75,7 +77,15 @@ const Search: React.FC<Props> = props => {
     }
   }, [user]);
 
-  useEffect(() => {}, [pollasMundialistas]);
+  useEffect(() => {
+    const updateSize = () => {
+      console.log(window.innerWidth);
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   const signOutHandler = () => {
     signOut();
@@ -229,9 +239,13 @@ const Search: React.FC<Props> = props => {
             selectedKeys={["searchTournaments"]}
           >
             <Menu.Item key="myTournaments" onClick={myTournamentsHandler}>
-              Mis Torneos
+              {size.width >= 610 && "Mis Torneos"}
+              {size.width < 610 && <HomeOutlined />}
             </Menu.Item>
-            <Menu.Item key="searchTournaments">Buscar Torneos</Menu.Item>
+            <Menu.Item key="searchTournaments">
+              {size.width >= 610 && "Buscar Torneos"}
+              {size.width < 610 && <FileSearchOutlined />}
+            </Menu.Item>
             <Menu.SubMenu
               key="userSubMenu"
               className="Search__header__submenu"

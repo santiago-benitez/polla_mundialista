@@ -5,6 +5,7 @@ import { TournamentStyledProps as Props } from "./Tournament.types";
 const TournamentStyled = styled.div<Props>`
   .Tournament {
     &__header {
+      padding-left: 0.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;

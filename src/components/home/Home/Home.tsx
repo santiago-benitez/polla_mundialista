@@ -10,11 +10,13 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import { PollaSubscription } from "../../../API";
 import Card from "antd/lib/card/Card";
+import { HomeOutlined, FileSearchOutlined } from "@ant-design/icons";
 
 const { Header, Content } = Layout;
 
 const Home: React.FC<Props> = props => {
   const { signOut, user } = useAuthenticator(context => [context.user]);
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const router = useRouter();
   const [subscriptions, setSubscriptions] = useState([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -53,6 +55,16 @@ const Home: React.FC<Props> = props => {
       }
     })();
   }, [user]);
+
+  useEffect(() => {
+    const updateSize = () => {
+      console.log(window.innerWidth);
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   const signOutHandler = () => {
     signOut();
@@ -112,12 +124,16 @@ const Home: React.FC<Props> = props => {
             className="Home__header__menu"
             selectedKeys={["myTournaments"]}
           >
-            <Menu.Item key="myTournaments">Mis Torneos</Menu.Item>
+            <Menu.Item key="myTournaments">
+              {size.width >= 610 && "Mis Torneos"}
+              {size.width < 610 && <HomeOutlined />}
+            </Menu.Item>
             <Menu.Item
               key="searchTournaments"
               onClick={searchTournamentsHandler}
             >
-              Buscar Torneos
+              {size.width >= 610 && "Buscar Torneos"}
+              {size.width < 610 && <FileSearchOutlined />}
             </Menu.Item>
             <Menu.SubMenu
               key="userSubMenu"

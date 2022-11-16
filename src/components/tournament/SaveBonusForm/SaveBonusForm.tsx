@@ -85,7 +85,7 @@ const SaveBonusForm: React.FC<Props> = props => {
     <Styles className="SaveBonusForm">
       <Modal
         open={open}
-        title="Nuevo Torneo"
+        title="Bonificaciones"
         okText="Guardar"
         cancelText="Cancelar"
         onCancel={onCancel}

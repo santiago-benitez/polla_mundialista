@@ -45,21 +45,20 @@ import {
 import { now } from "moment";
 import SaveMatchForm from "../SaveMatchForm/SaveMatchForm";
 import SaveBonusForm from "../SaveBonusForm/SaveBonusForm";
+import { HomeOutlined, FileSearchOutlined } from "@ant-design/icons";
 
 const Tournament: React.FC<Props> = props => {
   const router = useRouter();
   const { signOut, user } = useAuthenticator(context => [context.user]);
   const { pid } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
+  const [size, setSize] = useState({ width: 0, height: 0 });
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [saveBonusLoading, setSaveBonusLoading] = useState<boolean>(false);
   const [subscriptions, setSubscriptions] = useState<PollaSubscription[]>([]);
   const [subscriptionMatches, setSubscriptionMatches] = useState<
     SubscriptionMatch[]
   >([]);
-  // const [subscriptionGroupTeams, setSubscriptionGroupTeams] = useState<
-  //   SubscriptionGroupTeam[]
-  // >([]);
   const [rounds, setRounds] = useState<Round[] | undefined>(undefined);
   const [mySubscription, setMySubscription] =
     useState<PollaSubscription | null>(null);
@@ -133,6 +132,16 @@ const Tournament: React.FC<Props> = props => {
       }
     })();
   }, [pid, user]);
+
+  useEffect(() => {
+    const updateSize = () => {
+      console.log(window.innerWidth);
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    };
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
 
   const searchTournamentsHandler = () => {
     router.push("/search");
@@ -549,13 +558,15 @@ const Tournament: React.FC<Props> = props => {
           />
           <Menu mode="horizontal" className="Tournament__header__menu">
             <Menu.Item key="myTournaments" onClick={myTournamentsHandler}>
-              Mis Torneos
+              {size.width >= 610 && "Mis Torneos"}
+              {size.width < 610 && <HomeOutlined />}
             </Menu.Item>
             <Menu.Item
               key="searchTournaments"
               onClick={searchTournamentsHandler}
             >
-              Buscar Torneos
+              {size.width >= 610 && "Buscar Torneos"}
+              {size.width < 610 && <FileSearchOutlined />}
             </Menu.Item>
             <Menu.SubMenu
               key="use rSubMenu"
