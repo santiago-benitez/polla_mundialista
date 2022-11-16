@@ -11,6 +11,7 @@ describe("SaveBonusForm", () => {
         onCreate={() => {}}
         onCancel={() => {}}
         loading={true}
+        subscriptionId=""
       />
     );
   });

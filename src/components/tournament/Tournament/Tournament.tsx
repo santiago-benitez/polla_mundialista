@@ -33,11 +33,18 @@ import {
   UpdateSubscriptionMatchTeamInput,
   CreateSubscriptionMatchTeamInput,
   CreateSubscriptionMatchInput,
-  SubscriptionMatchTeam
+  SubscriptionMatchTeam,
+  CreateSubscriptionBonusInput,
+  UpdateSubscriptionBonusInput
 } from "../../../API";
-import { orderGroupsByName, orderMatchesByDate } from "./Tournament.utils";
+import {
+  getGroupPositionsByGroup,
+  orderGroupsByName,
+  orderMatchesByDate
+} from "./Tournament.utils";
 import { now } from "moment";
 import SaveMatchForm from "../SaveMatchForm/SaveMatchForm";
+import SaveBonusForm from "../SaveBonusForm/SaveBonusForm";
 
 const Tournament: React.FC<Props> = props => {
   const router = useRouter();
@@ -45,6 +52,7 @@ const Tournament: React.FC<Props> = props => {
   const { pid } = router.query;
   const [loading, setLoading] = useState<boolean>(false);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
+  const [saveBonusLoading, setSaveBonusLoading] = useState<boolean>(false);
   const [subscriptions, setSubscriptions] = useState<PollaSubscription[]>([]);
   const [subscriptionMatches, setSubscriptionMatches] = useState<
     SubscriptionMatch[]
@@ -56,6 +64,7 @@ const Tournament: React.FC<Props> = props => {
   const [mySubscription, setMySubscription] =
     useState<PollaSubscription | null>(null);
   const [open, setOpen] = useState<boolean>(false);
+  const [bonusOpen, setBonusOpen] = useState<boolean>(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | undefined>(
     undefined
   );
@@ -163,7 +172,7 @@ const Tournament: React.FC<Props> = props => {
         subscriptionsResult?.data?.listPollaSubscriptions?.items;
       setSubscriptions(fetchedSubscriptions);
     } catch (error) {
-      console.log("error");
+      console.log(error);
       message.error("Error al crear el torneo");
     }
     setLoading(false);
@@ -311,7 +320,6 @@ const Tournament: React.FC<Props> = props => {
         }
       }
     } else {
-      console.log("Opcion C");
       const createSubscriptionMatchInput: CreateSubscriptionMatchInput = {
         subscriptionPoints: 0,
         pollaSubscriptionSubscriptionMatchesId: mySubscription?.id,
@@ -338,7 +346,6 @@ const Tournament: React.FC<Props> = props => {
             values.match.matchTeams.items[0].team.id,
           subscriptionMatchSubscriptionMatchTeamsId: newSubscriptionMatch.id
         };
-        console.log(createTeamAInput, "Input TEAM A");
         // Create subscription match team A
         await API.graphql({
           query: mutations.createSubscriptionMatchTeam,
@@ -357,7 +364,6 @@ const Tournament: React.FC<Props> = props => {
           subscriptionMatchSubscriptionMatchTeamsId: newSubscriptionMatch.id
         };
         // Create subscription match team B
-        console.log(createTeamBInput, "Input TEAM B");
         await API.graphql({
           query: mutations.createSubscriptionMatchTeam,
           variables: { input: createTeamBInput }
@@ -384,7 +390,76 @@ const Tournament: React.FC<Props> = props => {
     setSaveLoading(false);
     setOpen(false);
   };
+  const onCancelBonus = () => {
+    setBonusOpen(false);
+  };
+  const onCreateBonus = async (values: any) => {
+    const {
+      championId,
+      secondId,
+      thirdId,
+      fourthId,
+      bestPlayerId,
+      maxScorerId
+    } = values;
+    setSaveBonusLoading(true);
+    try {
+      // fetch bonuses
+      const filter = {
+        pollaSubscriptionSubscriptionBonusesId: {
+          eq: mySubscription?.id
+        }
+      };
+      const bonusResult: any = await API.graphql({
+        query: queries.listSubscriptionBonuses,
+        variables: { filter, limit: "10000" }
+      });
+      const fetchedBonuses = bonusResult?.data?.listSubscriptionBonuses?.items;
+      if (fetchedBonuses && fetchedBonuses.length) {
+        const updateBonusInput: UpdateSubscriptionBonusInput = {
+          id: fetchedBonuses[0].id,
+          championId,
+          secondId,
+          thirdId,
+          fourthId,
+          bestPlayerId,
+          maxScorerId
+        };
+        // Create subscription match team B
+        await API.graphql({
+          query: mutations.updateSubscriptionBonus,
+          variables: { input: updateBonusInput }
+        });
+      } else {
+        const createBonusInput: CreateSubscriptionBonusInput = {
+          championId,
+          secondId,
+          thirdId,
+          fourthId,
+          bestPlayerId,
+          maxScorerId,
+          subscriptionPoints: 0,
+          pollaSubscriptionSubscriptionBonusesId: mySubscription?.id
+        };
+        // Create subscription match team B
+        await API.graphql({
+          query: mutations.createSubscriptionBonus,
+          variables: { input: createBonusInput }
+        });
+      }
+      message.success("Bonificaciones guardadas con éxito");
+    } catch (error) {
+      console.log(error);
+      message.error("Error al guardar las bonificaciones");
+    }
 
+    setSaveBonusLoading(false);
+    setBonusOpen(false);
+  };
+
+  const onBonusClicked = () => {
+    setBonusOpen(true);
+  };
   const columns: any = [
     {
       title: "Usuario",
@@ -419,6 +494,47 @@ const Tournament: React.FC<Props> = props => {
         </div>
       ),
       align: "right"
+    }
+  ];
+
+  const positionColumns: any = [
+    {
+      title: "Equipo",
+      key: "name",
+      render: (_: any, record: any) => (
+        <div className="Tournament__body__card__group__positions__team">
+          <Image
+            src={record.flagUrl}
+            alt={record.name}
+            className="Tournament__body__card__group__positions__image"
+          />
+          <p>{record.name}</p>
+        </div>
+      )
+    },
+    {
+      title: "Pts",
+      key: "pts",
+      dataIndex: "pts",
+      align: "center"
+    },
+    {
+      title: "Gf",
+      key: "gf",
+      dataIndex: "gf",
+      align: "center"
+    },
+    {
+      title: "Ga",
+      key: "ga",
+      dataIndex: "ga",
+      align: "center"
+    },
+    {
+      title: "Gd",
+      key: "gd",
+      dataIndex: "gd",
+      align: "center"
     }
   ];
 
@@ -462,22 +578,47 @@ const Tournament: React.FC<Props> = props => {
                   <div className="Tournament__body__card__instructions">
                     <h2>Fase de grupos</h2>
                     <p>
-                      En esta fase solo puntuarán los resultados de la fase de
-                      grupos.
+                      En esta fase debes llenar solo los prónosticos de los
+                      partidos de la fase de grupos.
                       <br />
-                      Sin embargo debes llenar todos los resultados incluídos
-                      octavos de final, cuartos de final, semifinal, 3ro y 4to
-                      puesto y final. <br />
-                      Adicional habrá una bonificación si atinas al campeón,
-                      subcampeón, 3ro y 4to.
+                      Adicional debes llenar las bonificaciones extra en donde
+                      seleccionas un campeón, subcampeón, 3ro, 4to, mejor
+                      jugador y goleador.
+                      <br />
+                      Los prónosticos debes llenar hasta antes de que empiecé el
+                      mundial, el 20 de noviembre a las 9h30 se deshabilitará la
+                      edición de pronósticos.
+                    </p>
+                    <h2>Octavos, Cuartos, Semifinal y Final</h2>
+                    <p>
+                      La fase de octavos se activará una vez que finalice la
+                      fase de grupos, la de cuartos una vez que finalicé la de
+                      octavos y así sucesivamente.
+                      <br />
+                      La forma de llenar los pronósticos y puntuar será la misma
+                      que en la fase de grupos.
+                      <br />
+                      El período que tienes para llenar lós prónosticos es el
+                      tiempo que se tiene entre que se finalizá la fase anterior
+                      y empieza la nueva fase.
                     </p>
 
                     <h3>Explicación puntuación</h3>
-                    <p>3 pts por atinar el resultado (ganador o empate)</p>
-                    <p>1 pt por atinar a los goles marcados por cada equipo</p>
                     <p>
-                      2 pts extras si atinas los goles marcados de los dos
-                      equipos
+                      La puntuación aplica para cada partido en el que llenaste
+                      un pronóstico.
+                    </p>
+                    <p>
+                      Se otorga 3 pts por atinar el resultado (ganador o
+                      empate).
+                    </p>
+                    <p>
+                      Se otorga 1 pt por atinar a los goles marcados por cada
+                      equipo
+                    </p>
+                    <p>
+                      Se otorga 2 pts extras si atinas los goles marcados de los
+                      dos equipos
                     </p>
                     <h3>Ejemplos</h3>
                     <p>
@@ -531,6 +672,8 @@ const Tournament: React.FC<Props> = props => {
                     <p>Subcampeón: 10 pts</p>
                     <p>Tercer lugar: 7 pts</p>
                     <p>Cuarto lugar: 5 pts</p>
+                    <p>Mejor jugador: 7 pts</p>
+                    <p>Máximo goleador: 7 pts</p>
                     {/* <p>Bono al Goleador: 5 pts</p>
                     <p>Bono al Mejor jugador: 5 pts</p> */}
                   </div>
@@ -660,10 +803,44 @@ const Tournament: React.FC<Props> = props => {
                                 )
                               )}
                           </Col>
-                          <Col sm={24} xs={24} lg={12} md={12}></Col>
+                          <Col
+                            sm={24}
+                            xs={24}
+                            lg={12}
+                            md={12}
+                            className="Tournament__body__card__group__positions"
+                          >
+                            <Table
+                              key={index}
+                              columns={positionColumns}
+                              dataSource={getGroupPositionsByGroup(
+                                subscriptionMatches,
+                                group
+                              )}
+                              pagination={false}
+                            />
+                          </Col>
                         </Row>
                       </Card>
                     ))}
+                  <Card
+                    title="Bonificaciónes"
+                    type="inner"
+                    className="Tournament__body__card__group"
+                  >
+                    <Row>
+                      <Col sm={24} xs={24} lg={12} md={12}>
+                        <div
+                          className="Tournament__body__card__group__bonus"
+                          onClick={onBonusClicked}
+                        >
+                          <p className="Tournament__body__card__group__bonus__text">
+                            Llena tus bonificaciones!
+                          </p>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Card>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Inscritos" key="3">
                   <Table
@@ -685,6 +862,13 @@ const Tournament: React.FC<Props> = props => {
             open={open}
             match={selectedMatch}
             loading={saveLoading}
+          />
+          <SaveBonusForm
+            onCancel={onCancelBonus}
+            onCreate={onCreateBonus}
+            open={bonusOpen}
+            loading={saveBonusLoading}
+            subscriptionId={mySubscription?.id}
           />
         </Content>
       </Layout>

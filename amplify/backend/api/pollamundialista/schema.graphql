@@ -84,7 +84,10 @@ type Team @model {
   groupTeams: [GroupTeam] @hasMany
   subscriptionGroupTeams: [SubscriptionGroupTeam] @hasMany
   subscriptionMatchTeams: [SubscriptionMatchTeam] @hasMany
-  subscriptionBonuses: [SubscriptionBonus] @hasMany
+  champions: [SubscriptionBonus] @hasMany
+  seconds: [SubscriptionBonus] @hasMany
+  thirds: [SubscriptionBonus] @hasMany
+  fourths: [SubscriptionBonus] @hasMany
 }
 
 type Match @model {
@@ -123,7 +126,8 @@ type Player @model {
   clubTeam: String
   marketValue: String
   imageUrl: String
-  subscriptionBonuses: [SubscriptionBonus] @hasMany
+  bestPlayers: [SubscriptionBonus] @hasMany
+  maxScorers: [SubscriptionBonus] @hasMany
 }
 
 type SubscriptionGroupTeam @model {
@@ -160,11 +164,17 @@ type SubscriptionMatchTeam @model {
 type SubscriptionBonus @model {
   id: ID!
   subscription: PollaSubscription @belongsTo
-  champion: Team @belongsTo
-  second: Team @belongsTo
-  third: Team @belongsTo
-  fourth: Team @belongsTo
-  bestPlayer: Player @belongsTo
-  maxScorer: Player @belongsTo
+  championId: ID!
+  champion: Team @belongsTo(fields: ["championId"])
+  secondId: ID!
+  second: Team @belongsTo(fields: ["secondId"])
+  thirdId: ID!
+  third: Team @belongsTo(fields: ["thirdId"])
+  fourthId: ID!
+  fourth: Team @belongsTo(fields: ["fourthId"])
+  bestPlayerId: ID!
+  bestPlayer: Player @belongsTo(fields: ["bestPlayerId"])
+  maxScorerId: ID!
+  maxScorer: Player @belongsTo(fields: ["maxScorerId"])
   subscriptionPoints: Int!
 }

@@ -1,4 +1,4 @@
-import { Match, Group } from "../../../API";
+import { Match, Group, SubscriptionMatch } from "../../../API";
 
 export const orderMatchesByDate = (matches: (Match | null)[] | undefined) => {
   if (!matches) {
@@ -27,4 +27,75 @@ export const orderGroupsByName = (groups: (Group | null)[] | undefined) => {
     return a?.name.localeCompare(b?.name ?? "") ?? 0;
   });
   return orderedGroups;
+};
+
+export const getGroupPositionsByGroup = (
+  subscriptionMatchs: SubscriptionMatch[],
+  group: Group | null
+) => {
+  if (!group) {
+    return;
+  }
+  const teamStats = group.groupTeams?.items.map(groupTeam => {
+    const stats = {
+      name: groupTeam?.team?.name,
+      flagUrl: groupTeam?.team?.flagUrl,
+      pts: 0,
+      gf: 0,
+      ga: 0,
+      gd: 0
+    };
+    const filteredMatches = subscriptionMatchs.filter(subMatch => {
+      return subMatch.match?.groupMatchesId === group.id;
+    });
+    filteredMatches.forEach(match => {
+      match.subscriptionMatchTeams?.items.forEach((team, index) => {
+        if (group.name === "Grupo A") {
+          console.log(team, "team");
+          console.log(groupTeam?.team, "groupTeam?.team");
+        }
+        if (team?.teamSubscriptionMatchTeamsId === groupTeam?.team?.id) {
+          stats.pts += team?.points ?? 0;
+          stats.gf += team?.score ?? 0;
+          stats.ga +=
+            match.subscriptionMatchTeams?.items[index === 0 ? 1 : 0]?.score ??
+            0;
+          stats.gd +=
+            (team?.score ?? 0) -
+            (match.subscriptionMatchTeams?.items[index === 0 ? 1 : 0]?.score ??
+              0);
+        }
+      });
+    });
+    return stats;
+  });
+  const positions = teamStats?.sort((b, a) => {
+    if (!a || !b) {
+      return 0;
+    }
+    if (a.pts > b.pts) {
+      return 1;
+    }
+    if (a.pts < b.pts) {
+      return -1;
+    }
+    if (a.pts === b.pts) {
+      if (a.gd > b.gd) {
+        return 1;
+      }
+      if (a.gd < b.gd) {
+        return -1;
+      }
+      if (a.gd === b.gd) {
+        if (a.gf > b.gf) {
+          return 1;
+        }
+        if (a.gf < b.gf) {
+          return -1;
+        }
+      }
+    }
+    return 0;
+  });
+  return positions;
 };

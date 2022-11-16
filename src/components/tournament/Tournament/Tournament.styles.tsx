@@ -85,10 +85,40 @@ const TournamentStyled = styled.div<Props>`
               color: white;
             }
           }
+          &__bonus {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #243447;
+            border-radius: calc(0.5rem);
+            padding: 1rem;
+            cursor: pointer;
+
+            &__text {
+              font-size: 1.5rem;
+              font-weight: 600;
+              line-height: 2rem;
+              color: white;
+              margin: 0;
+            }
+          }
           &__container {
             display: flex;
             justify-content: space-around;
             align-items: center;
+          }
+          &__positions {
+            padding: 0 2rem;
+            &__team {
+              display: flex;
+            }
+            &__image {
+              width: 1.5rem;
+              height: 0.9rem;
+              margin-right: 0.4rem;
+              margin-top: 0.2rem;
+            }
           }
         }
       }

@@ -122,12 +122,22 @@ export const getPollaSubscription = /* GraphQL */ `
       subscriptionBonuses {
         items {
           id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
           subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionBonusesId
-          teamSubscriptionBonusesId
-          playerSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
         }
         nextToken
       }
@@ -772,7 +782,16 @@ export const getGroupTeam = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
@@ -921,15 +940,91 @@ export const getTeam = /* GraphQL */ `
         }
         nextToken
       }
-      subscriptionBonuses {
+      champions {
         items {
           id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
           subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionBonusesId
-          teamSubscriptionBonusesId
-          playerSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
+        }
+        nextToken
+      }
+      seconds {
+        items {
+          id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
+          subscriptionPoints
+          createdAt
+          updatedAt
+          pollaSubscriptionSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
+        }
+        nextToken
+      }
+      thirds {
+        items {
+          id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
+          subscriptionPoints
+          createdAt
+          updatedAt
+          pollaSubscriptionSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
+        }
+        nextToken
+      }
+      fourths {
+        items {
+          id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
+          subscriptionPoints
+          createdAt
+          updatedAt
+          pollaSubscriptionSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
         }
         nextToken
       }
@@ -968,7 +1063,16 @@ export const listTeams = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
@@ -1205,7 +1309,16 @@ export const getMatchTeam = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
@@ -1325,7 +1438,16 @@ export const getPlayer = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
@@ -1335,15 +1457,47 @@ export const getPlayer = /* GraphQL */ `
       clubTeam
       marketValue
       imageUrl
-      subscriptionBonuses {
+      bestPlayers {
         items {
           id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
           subscriptionPoints
           createdAt
           updatedAt
           pollaSubscriptionSubscriptionBonusesId
-          teamSubscriptionBonusesId
-          playerSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
+        }
+        nextToken
+      }
+      maxScorers {
+        items {
+          id
+          championId
+          secondId
+          thirdId
+          fourthId
+          bestPlayerId
+          maxScorerId
+          subscriptionPoints
+          createdAt
+          updatedAt
+          pollaSubscriptionSubscriptionBonusesId
+          teamChampionsId
+          teamSecondsId
+          teamThirdsId
+          teamFourthsId
+          playerBestPlayersId
+          playerMaxScorersId
         }
         nextToken
       }
@@ -1378,7 +1532,10 @@ export const listPlayers = /* GraphQL */ `
         clubTeam
         marketValue
         imageUrl
-        subscriptionBonuses {
+        bestPlayers {
+          nextToken
+        }
+        maxScorers {
           nextToken
         }
         createdAt
@@ -1469,7 +1626,16 @@ export const getSubscriptionGroupTeam = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
@@ -1794,7 +1960,16 @@ export const getSubscriptionMatchTeam = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
@@ -1920,6 +2095,7 @@ export const getSubscriptionBonus = /* GraphQL */ `
         updatedAt
         pollaMundialistaPollaSubscriptionsId
       }
+      championId
       champion {
         id
         name
@@ -1943,12 +2119,22 @@ export const getSubscriptionBonus = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
         updatedAt
       }
+      secondId
       second {
         id
         name
@@ -1972,12 +2158,22 @@ export const getSubscriptionBonus = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
         updatedAt
       }
+      thirdId
       third {
         id
         name
@@ -2001,12 +2197,22 @@ export const getSubscriptionBonus = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
         updatedAt
       }
+      fourthId
       fourth {
         id
         name
@@ -2030,12 +2236,22 @@ export const getSubscriptionBonus = /* GraphQL */ `
         subscriptionMatchTeams {
           nextToken
         }
-        subscriptionBonuses {
+        champions {
+          nextToken
+        }
+        seconds {
+          nextToken
+        }
+        thirds {
+          nextToken
+        }
+        fourths {
           nextToken
         }
         createdAt
         updatedAt
       }
+      bestPlayerId
       bestPlayer {
         id
         name
@@ -2054,13 +2270,17 @@ export const getSubscriptionBonus = /* GraphQL */ `
         clubTeam
         marketValue
         imageUrl
-        subscriptionBonuses {
+        bestPlayers {
+          nextToken
+        }
+        maxScorers {
           nextToken
         }
         createdAt
         updatedAt
         teamPlayersId
       }
+      maxScorerId
       maxScorer {
         id
         name
@@ -2079,7 +2299,10 @@ export const getSubscriptionBonus = /* GraphQL */ `
         clubTeam
         marketValue
         imageUrl
-        subscriptionBonuses {
+        bestPlayers {
+          nextToken
+        }
+        maxScorers {
           nextToken
         }
         createdAt
@@ -2090,8 +2313,12 @@ export const getSubscriptionBonus = /* GraphQL */ `
       createdAt
       updatedAt
       pollaSubscriptionSubscriptionBonusesId
-      teamSubscriptionBonusesId
-      playerSubscriptionBonusesId
+      teamChampionsId
+      teamSecondsId
+      teamThirdsId
+      teamFourthsId
+      playerBestPlayersId
+      playerMaxScorersId
     }
   }
 `;
@@ -2119,6 +2346,7 @@ export const listSubscriptionBonuses = /* GraphQL */ `
           updatedAt
           pollaMundialistaPollaSubscriptionsId
         }
+        championId
         champion {
           id
           name
@@ -2130,6 +2358,7 @@ export const listSubscriptionBonuses = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        secondId
         second {
           id
           name
@@ -2141,6 +2370,7 @@ export const listSubscriptionBonuses = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        thirdId
         third {
           id
           name
@@ -2152,6 +2382,7 @@ export const listSubscriptionBonuses = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        fourthId
         fourth {
           id
           name
@@ -2163,6 +2394,7 @@ export const listSubscriptionBonuses = /* GraphQL */ `
           createdAt
           updatedAt
         }
+        bestPlayerId
         bestPlayer {
           id
           name
@@ -2174,6 +2406,7 @@ export const listSubscriptionBonuses = /* GraphQL */ `
           updatedAt
           teamPlayersId
         }
+        maxScorerId
         maxScorer {
           id
           name
@@ -2189,8 +2422,12 @@ export const listSubscriptionBonuses = /* GraphQL */ `
         createdAt
         updatedAt
         pollaSubscriptionSubscriptionBonusesId
-        teamSubscriptionBonusesId
-        playerSubscriptionBonusesId
+        teamChampionsId
+        teamSecondsId
+        teamThirdsId
+        teamFourthsId
+        playerBestPlayersId
+        playerMaxScorersId
       }
       nextToken
     }
