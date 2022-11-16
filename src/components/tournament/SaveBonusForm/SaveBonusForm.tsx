@@ -16,7 +16,8 @@ const SaveBonusForm: React.FC<Props> = props => {
     (async () => {
       try {
         const teamsResult: any = await API.graphql({
-          query: queries.listTeams
+          query: queries.listTeams,
+          variables: { limit: "10000" }
         });
         const fetchedTeams = teamsResult?.data?.listTeams?.items;
         if (fetchedTeams && fetchedTeams.length) {

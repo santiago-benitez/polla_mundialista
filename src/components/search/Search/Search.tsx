@@ -43,7 +43,8 @@ const Search: React.FC<Props> = props => {
         try {
           setLoadingPage(true);
           const pollasResult: any = await API.graphql({
-            query: queries.listPollaMundialistas
+            query: queries.listPollaMundialistas,
+            variables: { limit: "10000" }
           });
 
           const pollas = pollasResult?.data?.listPollaMundialistas?.items;
@@ -120,7 +121,8 @@ const Search: React.FC<Props> = props => {
         try {
           setLoadingPage(true);
           const pollasResult: any = await API.graphql({
-            query: queries.listPollaMundialistas
+            query: queries.listPollaMundialistas,
+            variables: { limit: "10000" }
           });
 
           const pollas = pollasResult?.data?.listPollaMundialistas?.items;

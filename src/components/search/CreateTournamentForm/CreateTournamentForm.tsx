@@ -16,7 +16,8 @@ const CreateTournamentForm: React.FC<Props> = props => {
     (async () => {
       try {
         const response: any = await API.graphql({
-          query: queries.listTournaments
+          query: queries.listTournaments,
+          variables: { limit: "10000" }
         });
         const fetchedTournaments = response?.data?.listTournaments?.items;
         if (fetchedTournaments && fetchedTournaments.length) {

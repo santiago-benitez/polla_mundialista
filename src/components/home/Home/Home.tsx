@@ -31,7 +31,7 @@ const Home: React.FC<Props> = props => {
           setLoading(true);
           const response: any = await API.graphql({
             query: queries.listPollaSubscriptions,
-            variables: { filter }
+            variables: { filter, limit: "10000" }
           });
           const pollaSubscriptions =
             response?.data?.listPollaSubscriptions?.items;

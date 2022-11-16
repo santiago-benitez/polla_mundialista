@@ -72,7 +72,7 @@ const Tournament: React.FC<Props> = props => {
         };
         const subscriptionsResult: any = await API.graphql({
           query: queries.listPollaSubscriptions,
-          variables: { filter }
+          variables: { filter, limit: "10000" }
         });
         const fetchedSubscriptions =
           subscriptionsResult?.data?.listPollaSubscriptions?.items;
@@ -86,7 +86,8 @@ const Tournament: React.FC<Props> = props => {
         setMySubscription(mySubscriptionFound);
         // Fetch and Set Rounds
         const roundsResult: any = await API.graphql({
-          query: queries.listRounds
+          query: queries.listRounds,
+          variables: { limit: "10000" }
         });
         const fetchedRounds = roundsResult?.data?.listRounds?.items;
         setRounds(fetchedRounds);
@@ -98,7 +99,7 @@ const Tournament: React.FC<Props> = props => {
         };
         const subscriptionMatchesResult: any = await API.graphql({
           query: queries.listSubscriptionMatches,
-          variables: { filter: subscriptionMatchesFilter }
+          variables: { filter: subscriptionMatchesFilter, limit: "10000" }
         });
         const fetchedSubscriptionMatches =
           subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
@@ -155,7 +156,7 @@ const Tournament: React.FC<Props> = props => {
       };
       const subscriptionsResult: any = await API.graphql({
         query: queries.listPollaSubscriptions,
-        variables: { filter }
+        variables: { filter, limit: "10000" }
       });
 
       const fetchedSubscriptions =
@@ -374,7 +375,7 @@ const Tournament: React.FC<Props> = props => {
     };
     const subscriptionMatchesResult: any = await API.graphql({
       query: queries.listSubscriptionMatches,
-      variables: { filter: subscriptionMatchesFilter }
+      variables: { filter: subscriptionMatchesFilter, limit: "10000" }
     });
     const fetchedSubscriptionMatches =
       subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
