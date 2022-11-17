@@ -26,7 +26,6 @@ const SaveMatchForm: React.FC<Props> = props => {
                 match,
                 result: values
               };
-              console.log(payload, "PAYLOAD");
               onCreate(payload);
             })
             .catch(info => {});

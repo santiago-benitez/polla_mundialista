@@ -24,6 +24,5 @@ export const createPollaMundialistaService = async (
     userId,
     email
   };
-  console.log("HEEEY");
   await createSubscriptionService(subscriptionInput);
 };

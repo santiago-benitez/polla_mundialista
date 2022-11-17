@@ -58,7 +58,6 @@ const Home: React.FC<Props> = props => {
 
   useEffect(() => {
     const updateSize = () => {
-      console.log(window.innerWidth);
       setSize({ width: window.innerWidth, height: window.innerHeight });
     };
     window.addEventListener("resize", updateSize);

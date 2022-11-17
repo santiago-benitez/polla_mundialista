@@ -135,7 +135,6 @@ const Tournament: React.FC<Props> = props => {
 
   useEffect(() => {
     const updateSize = () => {
-      console.log(window.innerWidth);
       setSize({ width: window.innerWidth, height: window.innerHeight });
     };
     window.addEventListener("resize", updateSize);
@@ -211,7 +210,6 @@ const Tournament: React.FC<Props> = props => {
         subscriptionMatchTeams.items[0] &&
         subscriptionMatchTeams.items[1]
       ) {
-        console.log("Opcion A");
         subscriptionMatchTeams.items.find(
           (matchTeam: SubscriptionMatchTeam | null) => {
             return (
@@ -282,7 +280,6 @@ const Tournament: React.FC<Props> = props => {
           message.error("Error al guardar el pronóstico");
         }
       } else {
-        console.log("Opcion B");
         const createTeamAInput: CreateSubscriptionMatchTeamInput = {
           score: result.teamA,
           points:
@@ -340,7 +337,6 @@ const Tournament: React.FC<Props> = props => {
           query: mutations.createSubscriptionMatch,
           variables: { input: createSubscriptionMatchInput }
         });
-        console.log(newSubscriptionMatchResult, "NEW SUBSCRIPTION MATCH");
         const newSubscriptionMatch: SubscriptionMatch =
           newSubscriptionMatchResult.data.createSubscriptionMatch;
         const createTeamAInput: CreateSubscriptionMatchTeamInput = {

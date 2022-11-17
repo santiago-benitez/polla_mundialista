@@ -51,8 +51,6 @@ export const getGroupPositionsByGroup = (
     filteredMatches.forEach(match => {
       match.subscriptionMatchTeams?.items.forEach((team, index) => {
         if (group.name === "Grupo A") {
-          console.log(team, "team");
-          console.log(groupTeam?.team, "groupTeam?.team");
         }
         if (team?.teamSubscriptionMatchTeamsId === groupTeam?.team?.id) {
           stats.pts += team?.points ?? 0;
