@@ -1,13 +1,13 @@
 // Project constants
 
-const ECUADOR = {
-  name: "Ecuador",
-  code: "593",
-  isoCode: "EC",
-  language: "es",
-  flag: "🇪🇨",
-  currencySymbol: "$"
-};
+// const ECUADOR = {
+//   name: "Ecuador",
+//   code: "593",
+//   isoCode: "EC",
+//   language: "es",
+//   flag: "🇪🇨",
+//   currencySymbol: "$"
+// };
 
 const CONSTANTS = {
   // HTML title tag text (Useful to display the brand name for SEO)
