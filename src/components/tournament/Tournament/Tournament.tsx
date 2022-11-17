@@ -589,27 +589,27 @@ const Tournament: React.FC<Props> = props => {
                   <div className="Tournament__body__card__instructions">
                     <h2>Fase de grupos</h2>
                     <p>
-                      En esta fase debes llenar solo los prónosticos de los
+                      En esta fase debes llenar solo los pronósticos de los
                       partidos de la fase de grupos.
                       <br />
                       Adicional debes llenar las bonificaciones extra en donde
                       seleccionas un campeón, subcampeón, 3ro, 4to, mejor
                       jugador y goleador.
                       <br />
-                      Los prónosticos debes llenar hasta antes de que empiecé el
+                      Los pronósticos debes llenar hasta antes de que empiece el
                       mundial, el 20 de noviembre a las 9h30 se deshabilitará la
                       edición de pronósticos.
                     </p>
                     <h2>Octavos, Cuartos, Semifinal y Final</h2>
                     <p>
                       La fase de octavos se activará una vez que finalice la
-                      fase de grupos, la de cuartos una vez que finalicé la de
+                      fase de grupos, la de cuartos una vez que finalice la de
                       octavos y así sucesivamente.
                       <br />
                       La forma de llenar los pronósticos y puntuar será la misma
                       que en la fase de grupos.
                       <br />
-                      El período que tienes para llenar lós prónosticos es el
+                      El período que tienes para llenar lós pronósticos es el
                       tiempo que se tiene entre que se finalizá la fase anterior
                       y empieza la nueva fase.
                     </p>
@@ -689,7 +689,7 @@ const Tournament: React.FC<Props> = props => {
                     <p>Bono al Mejor jugador: 5 pts</p> */}
                   </div>
                 </Tabs.TabPane>
-                <Tabs.TabPane tab="Mis prónosticos" key="2">
+                <Tabs.TabPane tab="Mis pronósticos" key="2">
                   <h3 className="Tournament__body__card__title">
                     Fase de Grupos
                   </h3>
