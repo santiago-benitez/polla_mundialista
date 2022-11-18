@@ -12,6 +12,8 @@ describe("SaveBonusForm", () => {
         onCancel={() => {}}
         loading={true}
         subscriptionId=""
+        pollaId=""
+        blocked={true}
       />
     );
   });

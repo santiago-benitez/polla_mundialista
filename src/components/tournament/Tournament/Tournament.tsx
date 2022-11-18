@@ -20,7 +20,7 @@ import { useAuthenticator, Image } from "@aws-amplify/ui-react";
 import { API } from "aws-amplify";
 import * as queries from "../../../graphql/queries";
 import * as mutations from "../../../graphql/mutations";
-import { format } from "date-fns";
+import { addMinutes, format } from "date-fns";
 import { es } from "date-fns/locale";
 import {
   Group,
@@ -54,6 +54,8 @@ const Tournament: React.FC<Props> = props => {
   const [loading, setLoading] = useState<boolean>(false);
   const [size, setSize] = useState({ width: 0, height: 0 });
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
+  const [matchBlocked, setMatchBlocked] = useState<boolean>(false);
+  const [bonusBlocked, setBonusBlocked] = useState<boolean>(false);
   const [saveBonusLoading, setSaveBonusLoading] = useState<boolean>(false);
   const [subscriptions, setSubscriptions] = useState<PollaSubscription[]>([]);
   const [subscriptionMatches, setSubscriptionMatches] = useState<
@@ -70,65 +72,54 @@ const Tournament: React.FC<Props> = props => {
 
   useEffect(() => {
     (async () => {
-      try {
-        setLoading(true);
-        // fetch subscriptions
-        const filter = {
-          pollaMundialistaPollaSubscriptionsId: {
-            eq: pid
-          }
-        };
-        const subscriptionsResult: any = await API.graphql({
-          query: queries.listPollaSubscriptions,
-          variables: { filter, limit: "10000" }
-        });
-        const fetchedSubscriptions =
-          subscriptionsResult?.data?.listPollaSubscriptions?.items;
-        setSubscriptions(fetchedSubscriptions);
-        // set my subscription
-        const mySubscriptionFound = fetchedSubscriptions.find(
-          (sub: PollaSubscription) => {
-            return sub.userId === user?.attributes?.sub;
-          }
-        );
-        setMySubscription(mySubscriptionFound);
-        // Fetch and Set Rounds
-        const roundsResult: any = await API.graphql({
-          query: queries.listRounds,
-          variables: { limit: "10000" }
-        });
-        const fetchedRounds = roundsResult?.data?.listRounds?.items;
-        setRounds(fetchedRounds);
-        // fetch subscription matches
-        const subscriptionMatchesFilter = {
-          pollaSubscriptionSubscriptionMatchesId: {
-            eq: mySubscriptionFound.id
-          }
-        };
-        const subscriptionMatchesResult: any = await API.graphql({
-          query: queries.listSubscriptionMatches,
-          variables: { filter: subscriptionMatchesFilter, limit: "10000" }
-        });
-        const fetchedSubscriptionMatches =
-          subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
-        setSubscriptionMatches(fetchedSubscriptionMatches);
-        // // fetch subscription group teams
-        // const subscriptionGroupTeamsFilter = {
-        //   pollaSubscriptionSubscriptionGroupsId: {
-        //     eq: mySubscriptionFound.id
-        //   }
-        // };
-        // const subscriptionGroupTeamsResult: any = await API.graphql({
-        //   query: queries.listSubscriptionGroupTeams,
-        //   variables: { filter: subscriptionGroupTeamsFilter }
-        // });
-        // const fetchedSubscriptionGroupTeams =
-        //   subscriptionGroupTeamsResult?.data?.listSubscriptionGroupTeams?.items;
-        // setSubscriptionGroupTeams(fetchedSubscriptionGroupTeams);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        console.log(error);
+      if (pid) {
+        try {
+          setLoading(true);
+          // fetch subscriptions
+          const filter = {
+            pollaMundialistaPollaSubscriptionsId: {
+              eq: pid
+            }
+          };
+          const subscriptionsResult: any = await API.graphql({
+            query: queries.listPollaSubscriptions,
+            variables: { filter, limit: "10000" }
+          });
+          const fetchedSubscriptions =
+            subscriptionsResult?.data?.listPollaSubscriptions?.items;
+          setSubscriptions(fetchedSubscriptions);
+          // set my subscription
+          const mySubscriptionFound = fetchedSubscriptions.find(
+            (sub: PollaSubscription) => {
+              return sub.userId === user?.attributes?.sub;
+            }
+          );
+          setMySubscription(mySubscriptionFound);
+          // Fetch and Set Rounds
+          const roundsResult: any = await API.graphql({
+            query: queries.listRounds,
+            variables: { limit: "10000" }
+          });
+          const fetchedRounds = roundsResult?.data?.listRounds?.items;
+          setRounds(fetchedRounds);
+          // fetch subscription matches
+          const subscriptionMatchesFilter = {
+            pollaSubscriptionSubscriptionMatchesId: {
+              eq: mySubscriptionFound.id
+            }
+          };
+          const subscriptionMatchesResult: any = await API.graphql({
+            query: queries.listSubscriptionMatches,
+            variables: { filter: subscriptionMatchesFilter, limit: "10000" }
+          });
+          const fetchedSubscriptionMatches =
+            subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
+          setSubscriptionMatches(fetchedSubscriptionMatches);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+          console.log(error);
+        }
       }
     })();
   }, [pid, user]);
@@ -187,7 +178,22 @@ const Tournament: React.FC<Props> = props => {
   };
 
   const onMatchClicked = (match: Match | null) => {
+    let blocked = false;
+    if (
+      new Date(now()) >= new Date("2022-11-20 09:30") &&
+      pid !== "4548399e-b0fd-4438-84d2-56c1826ef68b"
+    ) {
+      blocked = true;
+    }
     if (match) {
+      if (
+        addMinutes(new Date(now()), 15) >=
+          new Date(match?.matchDate ?? now()) &&
+        pid === "4548399e-b0fd-4438-84d2-56c1826ef68b"
+      ) {
+        blocked = true;
+      }
+      setMatchBlocked(blocked);
       setSelectedMatch(match);
       setOpen(true);
     }
@@ -463,6 +469,11 @@ const Tournament: React.FC<Props> = props => {
   };
 
   const onBonusClicked = () => {
+    let blocked = false;
+    if (new Date(now()) >= new Date("2022-11-20 09:30")) {
+      blocked = true;
+    }
+    setBonusBlocked(blocked);
     setBonusOpen(true);
   };
   const columns: any = [
@@ -475,7 +486,7 @@ const Tournament: React.FC<Props> = props => {
       title: "Estado",
       key: "status",
       render: (_: any, record: any) => (
-        <div>
+        <div key={record.id}>
           {mySubscription?.isAdmin && record.status === "Pendiente" && (
             <Popconfirm
               title={
@@ -507,7 +518,10 @@ const Tournament: React.FC<Props> = props => {
       title: "Equipo",
       key: "name",
       render: (_: any, record: any) => (
-        <div className="Tournament__body__card__group__positions__team">
+        <div
+          key={record.id}
+          className="Tournament__body__card__group__positions__team"
+        >
           <Image
             src={record.flagUrl}
             alt={record.name}
@@ -681,8 +695,6 @@ const Tournament: React.FC<Props> = props => {
                     <p>Cuarto lugar: 5 pts</p>
                     <p>Mejor jugador: 7 pts</p>
                     <p>Máximo goleador: 7 pts</p>
-                    {/* <p>Bono al Goleador: 5 pts</p>
-                    <p>Bono al Mejor jugador: 5 pts</p> */}
                   </div>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Mis pronósticos" key="2">
@@ -702,7 +714,7 @@ const Tournament: React.FC<Props> = props => {
                         type="inner"
                         className="Tournament__body__card__group"
                       >
-                        <Row>
+                        <Row key={index}>
                           <Col sm={24} xs={24} lg={12} md={12}>
                             {!!group &&
                               orderMatchesByDate(group.matches?.items)?.map(
@@ -854,6 +866,7 @@ const Tournament: React.FC<Props> = props => {
                     dataSource={subscriptions}
                     columns={columns}
                     loading={loading}
+                    pagination={{ defaultPageSize: 50 }}
                   />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Posiciones" key="4">
@@ -869,6 +882,8 @@ const Tournament: React.FC<Props> = props => {
             open={open}
             match={selectedMatch}
             loading={saveLoading}
+            blocked={matchBlocked}
+            pollaId={pid as string}
           />
           <SaveBonusForm
             onCancel={onCancelBonus}
@@ -876,6 +891,8 @@ const Tournament: React.FC<Props> = props => {
             open={bonusOpen}
             loading={saveBonusLoading}
             subscriptionId={mySubscription?.id}
+            blocked={bonusBlocked}
+            pollaId={pid as string}
           />
         </Content>
       </Layout>

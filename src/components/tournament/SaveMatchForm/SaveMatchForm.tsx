@@ -1,13 +1,90 @@
 import { Image } from "@aws-amplify/ui-react";
-import { Form, Modal, Spin, InputNumber } from "antd";
-import React from "react";
+import { Form, Modal, Spin, InputNumber, Row, Col } from "antd";
+import { API } from "aws-amplify";
+import React, { useEffect, useState } from "react";
+import { SubscriptionMatch } from "../../../API";
+import * as queries from "../../../graphql/queries";
+import { removeEmailFromText } from "../Tournament/Tournament.utils";
 
 import Styles from "./SaveMatchForm.styles";
 import { SaveMatchFormProps as Props } from "./SaveMatchForm.types";
 
 const SaveMatchForm: React.FC<Props> = props => {
   const [form] = Form.useForm();
-  const { open, onCreate, onCancel, loading, match } = props;
+  const { open, onCreate, onCancel, loading, match, blocked, pollaId } = props;
+  const [subscriptionMatches, setSubscriptionMatches] = useState([]);
+  const [loadingMatches, setLoadingMatches] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (blocked) {
+      (async () => {
+        try {
+          setLoadingMatches(true);
+          const subscriptionMatchesFilter = {
+            matchSubscriptionMatchesId: {
+              eq: match?.id
+            }
+          };
+          const subscriptionMatchesResult: any = await API.graphql({
+            query: queries.listSubscriptionMatches,
+            variables: { filter: subscriptionMatchesFilter, limit: "10000" }
+          });
+          const fetchedMatches =
+            subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
+          if (fetchedMatches && fetchedMatches.length) {
+            const filteredMatches = fetchedMatches.filter(
+              (fetchedMatch: SubscriptionMatch) => {
+                return (
+                  fetchedMatch.subscription
+                    ?.pollaMundialistaPollaSubscriptionsId === pollaId
+                );
+              }
+            );
+            const sortedMatches = filteredMatches.sort(
+              (a: SubscriptionMatch, b: SubscriptionMatch) => {
+                if (a.subscriptionPoints > b.subscriptionPoints) {
+                  return 1;
+                }
+                if (a.subscriptionPoints < b.subscriptionPoints) {
+                  return -1;
+                }
+                if (a.subscriptionPoints === b.subscriptionPoints) {
+                  return (
+                    a?.subscription?.email.localeCompare(
+                      b?.subscription?.email ?? ""
+                    ) ?? 0
+                  );
+                }
+                return 0;
+              }
+            );
+            const mappedMatches = sortedMatches.map(
+              (sortedMatch: SubscriptionMatch) => {
+                const matchTeams =
+                  sortedMatch.subscriptionMatchTeams?.items.sort((a, b) => {
+                    return (
+                      a?.team?.name.localeCompare(b?.team?.name ?? "") ?? 0
+                    );
+                  });
+                return {
+                  ...sortedMatch,
+                  subscriptionMatchTeams: {
+                    ...sortedMatch.subscriptionMatchTeams,
+                    items: matchTeams
+                  }
+                };
+              }
+            );
+            setLoadingMatches(false);
+            setSubscriptionMatches(mappedMatches);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+  }, [blocked, match?.id, pollaId]);
+
   return (
     <Styles className="CreateTournamentForm">
       <Modal
@@ -30,9 +107,9 @@ const SaveMatchForm: React.FC<Props> = props => {
             })
             .catch(info => {});
         }}
-        okButtonProps={{ disabled: loading }}
+        okButtonProps={{ disabled: loading || blocked }}
       >
-        {!loading && (
+        {!loading && !blocked && (
           <Form
             form={form}
             layout="vertical"
@@ -133,7 +210,7 @@ const SaveMatchForm: React.FC<Props> = props => {
             </div>
           </Form>
         )}
-        {loading && (
+        {(loading || loadingMatches) && (
           <div
             className="CreateTournamentForm__loading"
             style={{
@@ -143,6 +220,69 @@ const SaveMatchForm: React.FC<Props> = props => {
             }}
           >
             <Spin />
+          </div>
+        )}
+        {blocked && !loadingMatches && (
+          <div>
+            <Row>
+              <p>
+                El periodo para llenar el pronóstico de este partido concluyó.
+                Los pronósticos de los participantes son los siguientes:
+              </p>
+            </Row>
+            {!!subscriptionMatches &&
+              subscriptionMatches.map(
+                (subscriptionMatch: SubscriptionMatch) => (
+                  <Row key={subscriptionMatch.id} justify="space-around">
+                    <Col span="12">
+                      {removeEmailFromText(
+                        subscriptionMatch.subscription?.email
+                      )}
+                      :
+                    </Col>
+                    <Col
+                      span="12"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around"
+                      }}
+                    >
+                      <div>
+                        <Image
+                          src={
+                            subscriptionMatch.subscriptionMatchTeams?.items[0]
+                              ?.team?.flagUrl ?? ""
+                          }
+                          alt="flag"
+                          style={{ width: "2rem", marginRight: "0.5rem" }}
+                        />
+                      </div>
+                      <div>
+                        {
+                          subscriptionMatch.subscriptionMatchTeams?.items[0]
+                            ?.score
+                        }{" "}
+                        -{" "}
+                        {
+                          subscriptionMatch.subscriptionMatchTeams?.items[1]
+                            ?.score
+                        }
+                      </div>
+                      <div>
+                        <Image
+                          src={
+                            subscriptionMatch.subscriptionMatchTeams?.items[1]
+                              ?.team?.flagUrl ?? ""
+                          }
+                          alt="flag"
+                          style={{ width: "2rem", marginRight: "0.5rem" }}
+                        />
+                      </div>
+                      <div>Pts: {subscriptionMatch.subscriptionPoints}</div>
+                    </Col>
+                  </Row>
+                )
+              )}
           </div>
         )}
       </Modal>

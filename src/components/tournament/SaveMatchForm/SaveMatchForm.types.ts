@@ -9,6 +9,8 @@ export interface SaveMatchFormProps {
   onCancel: () => void;
   loading: boolean;
   match: Match | undefined;
+  blocked: boolean;
+  pollaId: string | undefined;
 }
 
 // Styled Component Props

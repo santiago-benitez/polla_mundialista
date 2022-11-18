@@ -97,10 +97,6 @@ export const createSubscriptionBundleService = async (
                       });
                       const newSubMatch: SubscriptionMatch =
                         newSubMatchResult.data.createSubscriptionMatch;
-                      console.log(
-                        "new subscription match created: ",
-                        newSubMatch.id
-                      );
                       // 7.- Retrieve matches
                       const getMatchesResult: any = await API.graphql({
                         query: queries.getMatch,

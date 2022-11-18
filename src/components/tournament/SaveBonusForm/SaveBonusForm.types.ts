@@ -7,6 +7,8 @@ export interface SaveBonusFormProps {
   onCancel: () => void;
   loading: boolean;
   subscriptionId: string | undefined;
+  pollaId: string | undefined;
+  blocked: boolean;
 }
 
 // Styled Component Props

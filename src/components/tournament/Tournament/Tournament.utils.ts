@@ -95,3 +95,13 @@ export const getGroupPositionsByGroup = (
   });
   return positions;
 };
+export const removeEmailFromText = (text: string | undefined) => {
+  if (!text) {
+    return text;
+  }
+  const index = text.indexOf("@");
+  if (index < 0) {
+    return text;
+  }
+  return text.substring(0, index);
+};

@@ -12,6 +12,8 @@ describe("SaveMatchForm", () => {
         onCancel={() => {}}
         loading={true}
         match={undefined}
+        blocked={true}
+        pollaId=""
       />
     );
   });

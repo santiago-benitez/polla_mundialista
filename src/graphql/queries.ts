@@ -1920,6 +1920,12 @@ export const listSubscriptionMatches = /* GraphQL */ `
             createdAt
             updatedAt
             teamSubscriptionMatchTeamsId
+            team {
+              id
+              name
+              description
+              flagUrl
+            }
             subscriptionMatchSubscriptionMatchTeamsId
           }
           nextToken
