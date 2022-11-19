@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuthenticator, Image } from "@aws-amplify/ui-react";
 import {
-  Button,
+  // Button,
   Input,
   Layout,
   Menu,
@@ -108,9 +108,9 @@ const Search: React.FC<Props> = props => {
     setFilteredPollas(filteredPollasMundialistas);
   };
 
-  const createTournamentHandler = () => {
-    setIsModalOpen(true);
-  };
+  // const createTournamentHandler = () => {
+  //   setIsModalOpen(true);
+  // };
 
   const onInvitation = async (record: PollaMundialista) => {
     if (user && user.attributes && user.attributes.sub) {
@@ -265,9 +265,9 @@ const Search: React.FC<Props> = props => {
                   placeholder="Buscar torneo"
                   onSearch={onSearch}
                 />
-                <Button type="primary" onClick={createTournamentHandler}>
+                {/* <Button type="primary" onClick={createTournamentHandler}>
                   Nuevo
-                </Button>
+                </Button> */}
               </div>
             }
           >
