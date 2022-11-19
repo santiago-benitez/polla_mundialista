@@ -18,7 +18,7 @@ const HomePage = (props: Props) => {
   const [loading, setLoading] = useState(true);
   setTimeout(() => {
     setLoading(false);
-  }, 1000);
+  }, 200);
 
   useEffect(() => {
     const { authStatus } = auth;

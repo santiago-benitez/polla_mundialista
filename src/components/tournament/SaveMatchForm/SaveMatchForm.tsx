@@ -19,64 +19,66 @@ const SaveMatchForm: React.FC<Props> = props => {
     if (blocked) {
       (async () => {
         try {
-          setLoadingMatches(true);
-          const subscriptionMatchesFilter = {
-            matchSubscriptionMatchesId: {
-              eq: match?.id
-            }
-          };
-          const subscriptionMatchesResult: any = await API.graphql({
-            query: queries.listSubscriptionMatches,
-            variables: { filter: subscriptionMatchesFilter, limit: "10000" }
-          });
-          const fetchedMatches =
-            subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
-          if (fetchedMatches && fetchedMatches.length) {
-            const filteredMatches = fetchedMatches.filter(
-              (fetchedMatch: SubscriptionMatch) => {
-                return (
-                  fetchedMatch.subscription
-                    ?.pollaMundialistaPollaSubscriptionsId === pollaId
-                );
+          if (match?.id) {
+            setLoadingMatches(true);
+            const subscriptionMatchesFilter = {
+              matchSubscriptionMatchesId: {
+                eq: match?.id
               }
-            );
-            const sortedMatches = filteredMatches.sort(
-              (a: SubscriptionMatch, b: SubscriptionMatch) => {
-                if (a.subscriptionPoints > b.subscriptionPoints) {
-                  return 1;
-                }
-                if (a.subscriptionPoints < b.subscriptionPoints) {
-                  return -1;
-                }
-                if (a.subscriptionPoints === b.subscriptionPoints) {
+            };
+            const subscriptionMatchesResult: any = await API.graphql({
+              query: queries.listSubscriptionMatches,
+              variables: { filter: subscriptionMatchesFilter, limit: "10000" }
+            });
+            const fetchedMatches =
+              subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
+            if (fetchedMatches && fetchedMatches.length) {
+              const filteredMatches = fetchedMatches.filter(
+                (fetchedMatch: SubscriptionMatch) => {
                   return (
-                    a?.subscription?.email.localeCompare(
-                      b?.subscription?.email ?? ""
-                    ) ?? 0
+                    fetchedMatch.subscription
+                      ?.pollaMundialistaPollaSubscriptionsId === pollaId
                   );
                 }
-                return 0;
-              }
-            );
-            const mappedMatches = sortedMatches.map(
-              (sortedMatch: SubscriptionMatch) => {
-                const matchTeams =
-                  sortedMatch.subscriptionMatchTeams?.items.sort((a, b) => {
-                    return (
-                      a?.team?.name.localeCompare(b?.team?.name ?? "") ?? 0
-                    );
-                  });
-                return {
-                  ...sortedMatch,
-                  subscriptionMatchTeams: {
-                    ...sortedMatch.subscriptionMatchTeams,
-                    items: matchTeams
+              );
+              const sortedMatches = filteredMatches.sort(
+                (a: SubscriptionMatch, b: SubscriptionMatch) => {
+                  if (a.subscriptionPoints < b.subscriptionPoints) {
+                    return 1;
                   }
-                };
-              }
-            );
-            setLoadingMatches(false);
-            setSubscriptionMatches(mappedMatches);
+                  if (a.subscriptionPoints > b.subscriptionPoints) {
+                    return -1;
+                  }
+                  if (a.subscriptionPoints === b.subscriptionPoints) {
+                    return (
+                      a?.subscription?.email.localeCompare(
+                        b?.subscription?.email ?? ""
+                      ) ?? 0
+                    );
+                  }
+                  return 0;
+                }
+              );
+              const mappedMatches = sortedMatches.map(
+                (sortedMatch: SubscriptionMatch) => {
+                  const matchTeams =
+                    sortedMatch.subscriptionMatchTeams?.items.sort((a, b) => {
+                      return (
+                        a?.team?.name.localeCompare(b?.team?.name ?? "") ?? 0
+                      );
+                    });
+                  return {
+                    ...sortedMatch,
+                    subscriptionMatchTeams: {
+                      ...sortedMatch.subscriptionMatchTeams,
+                      items: matchTeams
+                    }
+                  };
+                }
+              );
+              setLoadingMatches(false);
+              setSubscriptionMatches(mappedMatches);
+            }
           }
         } catch (error) {
           console.log(error);

@@ -74,6 +74,62 @@ export const listPollaMundialistas = /* GraphQL */ `
           updatedAt
         }
         pollaSubscriptions {
+          items {
+            id
+            isAdmin
+            totalPoints
+            status
+            userId
+            email
+            createdAt
+            updatedAt
+            pollaMundialistaPollaSubscriptionsId
+            subscriptionMatches {
+              items {
+                id
+                subscriptionPoints
+                createdAt
+                updatedAt
+                pollaSubscriptionSubscriptionMatchesId
+                matchSubscriptionMatchesId
+                subscriptionMatchTeams {
+                  items {
+                    id
+                    score
+                    points
+                    createdAt
+                    updatedAt
+                    teamSubscriptionMatchTeamsId
+                    subscriptionMatchSubscriptionMatchTeamsId
+                  }
+                  nextToken
+                }
+              }
+              nextToken
+            }
+            subscriptionBonuses {
+              items {
+                id
+                championId
+                secondId
+                thirdId
+                fourthId
+                bestPlayerId
+                maxScorerId
+                subscriptionPoints
+                createdAt
+                updatedAt
+                pollaSubscriptionSubscriptionBonusesId
+                teamChampionsId
+                teamSecondsId
+                teamThirdsId
+                teamFourthsId
+                playerBestPlayersId
+                playerMaxScorersId
+              }
+              nextToken
+            }
+          }
           nextToken
         }
         createdAt
@@ -1218,6 +1274,26 @@ export const listMatches = /* GraphQL */ `
         matchDate
         status
         matchTeams {
+          items {
+            id
+            score
+            points
+            createdAt
+            updatedAt
+            teamMatchTeamsId
+            team {
+              id
+              name
+              description
+              flagUrl
+              imageUrl
+              historyJson
+              dt
+              createdAt
+              updatedAt
+            }
+            matchMatchTeamsId
+          }
           nextToken
         }
         subscriptionMatches {
