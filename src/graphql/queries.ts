@@ -36,6 +36,18 @@ export const getPollaMundialista = /* GraphQL */ `
           email
           createdAt
           updatedAt
+          subscriptionMatches {
+            items {
+              id
+              subscriptionPoints
+            }
+          }
+          subscriptionBonuses {
+            items {
+              id
+              subscriptionPoints
+            }
+          }
           pollaMundialistaPollaSubscriptionsId
         }
         nextToken

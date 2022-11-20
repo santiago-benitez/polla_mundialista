@@ -114,18 +114,30 @@ const Admin: React.FC<Props> = props => {
   const onFinish = async (values: any) => {
     const teamScoreA = values.teamAScore;
     const teamScoreB = values.teamBScore;
+
     // 1.- get Subscription Matches
+    let nextToken = null;
+    let fetchedSubscriptionMatches: any = [];
     const filter = {
       matchSubscriptionMatchesId: {
         eq: selectedMatch?.id
       }
     };
-    const resultSubscriptionMatches: any = await API.graphql({
-      query: queries.listSubscriptionMatches,
-      variables: { filter, limit: "10000" }
-    });
-    const fetchedSubscriptionMatches =
-      resultSubscriptionMatches?.data?.listSubscriptionMatches?.items;
+    do {
+      const subscriptionMatchesResult: any = await API.graphql({
+        query: queries.listSubscriptionMatches,
+        variables: { filter, limit: "10000", nextToken }
+      });
+      if (subscriptionMatchesResult?.data?.listSubscriptionMatches) {
+        fetchedSubscriptionMatches = [
+          ...fetchedSubscriptionMatches,
+          ...subscriptionMatchesResult.data.listSubscriptionMatches.items
+        ];
+        nextToken =
+          subscriptionMatchesResult.data.listSubscriptionMatches.nextToken;
+      }
+    } while (nextToken != null);
+
     // 2.- save match teams results
     if (
       selectedMatch?.matchTeams?.items[0]?.id &&

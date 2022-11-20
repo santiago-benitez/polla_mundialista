@@ -35,7 +35,8 @@ import {
   CreateSubscriptionMatchInput,
   SubscriptionMatchTeam,
   CreateSubscriptionBonusInput,
-  UpdateSubscriptionBonusInput
+  UpdateSubscriptionBonusInput,
+  PollaMundialista
 } from "../../../API";
 import {
   getGroupPositionsByGroup,
@@ -56,6 +57,7 @@ const Tournament: React.FC<Props> = props => {
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [matchBlocked, setMatchBlocked] = useState<boolean>(false);
   const [bonusBlocked, setBonusBlocked] = useState<boolean>(false);
+  const [positions, setPositions] = useState<any>();
   const [saveBonusLoading, setSaveBonusLoading] = useState<boolean>(false);
   const [subscriptions, setSubscriptions] = useState<PollaSubscription[]>([]);
   const [subscriptionMatches, setSubscriptionMatches] = useState<
@@ -102,18 +104,68 @@ const Tournament: React.FC<Props> = props => {
           });
           const fetchedRounds = roundsResult?.data?.listRounds?.items;
           setRounds(fetchedRounds);
+          // Fetch Polla mundialista and positions
+          const getPollaResult: any = await API.graphql({
+            query: queries.getPollaMundialista,
+            variables: { id: pid }
+          });
+          const polla: PollaMundialista =
+            getPollaResult.data.getPollaMundialista;
+          const subscriptionPoints = polla.pollaSubscriptions?.items.map(
+            sub => {
+              const points = sub?.subscriptionMatches?.items.reduce(
+                (accumulator, object) => {
+                  return accumulator + (object?.subscriptionPoints ?? 0);
+                },
+                0
+              );
+              return {
+                email: sub?.email,
+                points
+              };
+            }
+          );
+          const subscriptionsPositions = subscriptionPoints?.sort((a, b) => {
+            if (!a || !b) {
+              return 0;
+            }
+            if ((a.points ?? 0) < (b.points ?? 0)) {
+              return 1;
+            }
+            if ((a.points ?? 0) > (b.points ?? 0)) {
+              return -1;
+            }
+            return 0;
+          });
+          setPositions(subscriptionsPositions);
           // fetch subscription matches
           const subscriptionMatchesFilter = {
             pollaSubscriptionSubscriptionMatchesId: {
               eq: mySubscriptionFound.id
             }
           };
-          const subscriptionMatchesResult: any = await API.graphql({
-            query: queries.listSubscriptionMatches,
-            variables: { filter: subscriptionMatchesFilter, limit: "10000" }
-          });
-          const fetchedSubscriptionMatches =
-            subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
+          let nextToken = null;
+          let fetchedSubscriptionMatches: any = [];
+          do {
+            const subscriptionMatchesResult: any = await API.graphql({
+              query: queries.listSubscriptionMatches,
+              variables: {
+                filter: subscriptionMatchesFilter,
+                limit: "10000",
+                nextToken
+              }
+            });
+            if (subscriptionMatchesResult?.data?.listSubscriptionMatches) {
+              fetchedSubscriptionMatches = [
+                ...fetchedSubscriptionMatches,
+                ...subscriptionMatchesResult.data.listSubscriptionMatches.items
+              ];
+              nextToken =
+                subscriptionMatchesResult.data.listSubscriptionMatches
+                  .nextToken;
+            }
+          } while (nextToken != null);
+
           setSubscriptionMatches(fetchedSubscriptionMatches);
           setLoading(false);
         } catch (error) {
@@ -390,12 +442,27 @@ const Tournament: React.FC<Props> = props => {
         eq: mySubscription?.id
       }
     };
-    const subscriptionMatchesResult: any = await API.graphql({
-      query: queries.listSubscriptionMatches,
-      variables: { filter: subscriptionMatchesFilter, limit: "10000" }
-    });
-    const fetchedSubscriptionMatches =
-      subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
+    let nextToken = null;
+    let fetchedSubscriptionMatches: any = [];
+    do {
+      const subscriptionMatchesResult: any = await API.graphql({
+        query: queries.listSubscriptionMatches,
+        variables: {
+          filter: subscriptionMatchesFilter,
+          limit: "10000",
+          nextToken
+        }
+      });
+      if (subscriptionMatchesResult?.data?.listSubscriptionMatches) {
+        fetchedSubscriptionMatches = [
+          ...fetchedSubscriptionMatches,
+          ...subscriptionMatchesResult.data.listSubscriptionMatches.items
+        ];
+        nextToken =
+          subscriptionMatchesResult.data.listSubscriptionMatches.nextToken;
+      }
+    } while (nextToken != null);
+
     setSubscriptionMatches(fetchedSubscriptionMatches);
     message.success("Pronóstico guardado");
     setSaveLoading(false);
@@ -510,6 +577,19 @@ const Tournament: React.FC<Props> = props => {
         </div>
       ),
       align: "right"
+    }
+  ];
+
+  const positionsColumns: any = [
+    {
+      title: "Usuario",
+      key: "email",
+      dataIndex: "email"
+    },
+    {
+      title: "Puntos",
+      key: "points",
+      dataIndex: "points"
     }
   ];
 
@@ -870,7 +950,11 @@ const Tournament: React.FC<Props> = props => {
                   />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Posiciones" key="4">
-                  Se habilitará una vez que inicien los partidos
+                  <Table
+                    columns={positionsColumns}
+                    dataSource={positions}
+                    pagination={false}
+                  ></Table>
                 </Tabs.TabPane>
               </Tabs>
             )}
