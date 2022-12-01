@@ -5,6 +5,8 @@ import {
   Menu,
   message,
   Popconfirm,
+  Radio,
+  RadioChangeEvent,
   Row,
   Spin,
   Table,
@@ -39,9 +41,11 @@ import {
   PollaMundialista
 } from "../../../API";
 import {
+  calculatePositions,
   getGroupPositionsByGroup,
   orderGroupsByName,
-  orderMatchesByDate
+  orderMatchesByDate,
+  sortPositions
 } from "./Tournament.utils";
 import { now } from "moment";
 import SaveMatchForm from "../SaveMatchForm/SaveMatchForm";
@@ -63,6 +67,7 @@ const Tournament: React.FC<Props> = props => {
   const [subscriptionMatches, setSubscriptionMatches] = useState<
     SubscriptionMatch[]
   >([]);
+  const [polla, setPolla] = useState<PollaMundialista | undefined>();
   const [rounds, setRounds] = useState<Round[] | undefined>(undefined);
   const [mySubscription, setMySubscription] =
     useState<PollaSubscription | null>(null);
@@ -71,6 +76,7 @@ const Tournament: React.FC<Props> = props => {
   const [selectedMatch, setSelectedMatch] = useState<Match | undefined>(
     undefined
   );
+  const [positionsOption, setPositionsOption] = useState("ALL");
 
   useEffect(() => {
     (async () => {
@@ -109,35 +115,14 @@ const Tournament: React.FC<Props> = props => {
             query: queries.getPollaMundialista,
             variables: { id: pid }
           });
-          const polla: PollaMundialista =
+          const fetchedPolla: PollaMundialista =
             getPollaResult.data.getPollaMundialista;
-          const subscriptionPoints = polla.pollaSubscriptions?.items.map(
-            sub => {
-              const points = sub?.subscriptionMatches?.items.reduce(
-                (accumulator, object) => {
-                  return accumulator + (object?.subscriptionPoints ?? 0);
-                },
-                0
-              );
-              return {
-                email: sub?.email,
-                points
-              };
-            }
+          setPolla(fetchedPolla);
+          const subscriptionPoints = calculatePositions(
+            fetchedPolla.pollaSubscriptions?.items
           );
-          const subscriptionsPositions = subscriptionPoints?.sort((a, b) => {
-            if (!a || !b) {
-              return 0;
-            }
-            if ((a.points ?? 0) < (b.points ?? 0)) {
-              return 1;
-            }
-            if ((a.points ?? 0) > (b.points ?? 0)) {
-              return -1;
-            }
-            return 0;
-          });
-          setPositions(subscriptionsPositions);
+          const sortedPositions = sortPositions(subscriptionPoints);
+          setPositions(sortedPositions);
           // fetch subscription matches
           const subscriptionMatchesFilter = {
             pollaSubscriptionSubscriptionMatchesId: {
@@ -231,17 +216,9 @@ const Tournament: React.FC<Props> = props => {
 
   const onMatchClicked = (match: Match | null) => {
     let blocked = false;
-    if (
-      new Date(now()) >= new Date("2022-11-20 09:30") &&
-      pid !== "4548399e-b0fd-4438-84d2-56c1826ef68b"
-    ) {
-      blocked = true;
-    }
     if (match) {
       if (
-        addMinutes(new Date(now()), 15) >=
-          new Date(match?.matchDate ?? now()) &&
-        pid === "4548399e-b0fd-4438-84d2-56c1826ef68b"
+        addMinutes(new Date(now()), 15) >= new Date(match?.matchDate ?? now())
       ) {
         blocked = true;
       }
@@ -543,6 +520,28 @@ const Tournament: React.FC<Props> = props => {
     setBonusBlocked(blocked);
     setBonusOpen(true);
   };
+
+  const onPositionsOptionChange = (e: RadioChangeEvent) => {
+    const selectedOption = e.target.value;
+    setPositionsOption(selectedOption);
+    if (polla) {
+      let filter = undefined;
+      if (selectedOption === "ALL") {
+        filter = undefined;
+      } else if (selectedOption === "GROUPS") {
+        filter = ["Fase de grupos"];
+      } else if (selectedOption === "BRACKETS") {
+        filter = ["Octavos de final", "Cuartos de final", "Semifinal", "Final"];
+      }
+      const subscriptionPoints = calculatePositions(
+        polla.pollaSubscriptions?.items,
+        filter
+      );
+      const sortedPositions = sortPositions(subscriptionPoints);
+      setPositions(sortedPositions);
+    }
+  };
+
   const columns: any = [
     {
       title: "Usuario",
@@ -581,6 +580,11 @@ const Tournament: React.FC<Props> = props => {
   ];
 
   const positionsColumns: any = [
+    {
+      title: "Pos.",
+      key: "position",
+      dataIndex: "position"
+    },
     {
       title: "Usuario",
       key: "email",
@@ -778,168 +782,695 @@ const Tournament: React.FC<Props> = props => {
                   </div>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Mis pronósticos" key="2">
-                  <h3 className="Tournament__body__card__title">
+                  <Tabs defaultActiveKey="1">
+                    <Tabs.TabPane tab="Grupos" key="1">
+                      {/* <h3 className="Tournament__body__card__title">
                     Fase de Grupos
-                  </h3>
-                  {!!rounds &&
-                    !!rounds.length &&
-                    orderGroupsByName(
-                      rounds.find(
-                        (round: Round) => round.name === "Fase de grupos"
-                      )?.groups?.items
-                    )?.map((group: Group | null, index: number) => (
+                  </h3> */}
+                      {!!rounds &&
+                        !!rounds.length &&
+                        orderGroupsByName(
+                          rounds.find(
+                            (round: Round) => round.name === "Fase de grupos"
+                          )?.groups?.items
+                        )?.map((group: Group | null, index: number) => (
+                          <Card
+                            key={index}
+                            title={group?.name}
+                            type="inner"
+                            className="Tournament__body__card__group"
+                          >
+                            <Row key={index}>
+                              <Col sm={24} xs={24} lg={12} md={12}>
+                                {!!group &&
+                                  orderMatchesByDate(group.matches?.items)?.map(
+                                    (match, key: number) => (
+                                      <div
+                                        key={key}
+                                        className="Tournament__body__card__group__match"
+                                        onClick={() => onMatchClicked(match)}
+                                      >
+                                        <div className="Tournament__body__card__group__container">
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__board">
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[0]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__team__name">
+                                              -
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[1]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <p className="Tournament__body__card__group__match__date">
+                                          {format(
+                                            new Date(match?.matchDate ?? now()),
+                                            "MMMM dd, hh:mm",
+                                            { locale: es }
+                                          )}
+                                        </p>
+                                      </div>
+                                    )
+                                  )}
+                              </Col>
+                              <Col
+                                sm={24}
+                                xs={24}
+                                lg={12}
+                                md={12}
+                                className="Tournament__body__card__group__positions"
+                              >
+                                <Table
+                                  key={index}
+                                  columns={positionColumns}
+                                  dataSource={getGroupPositionsByGroup(
+                                    subscriptionMatches,
+                                    group
+                                  )}
+                                  pagination={false}
+                                />
+                              </Col>
+                            </Row>
+                          </Card>
+                        ))}
                       <Card
-                        key={index}
-                        title={group?.name}
+                        title="Bonificaciónes"
                         type="inner"
                         className="Tournament__body__card__group"
                       >
-                        <Row key={index}>
+                        <Row>
                           <Col sm={24} xs={24} lg={12} md={12}>
-                            {!!group &&
-                              orderMatchesByDate(group.matches?.items)?.map(
-                                (match, key: number) => (
-                                  <div
-                                    key={key}
-                                    className="Tournament__body__card__group__match"
-                                    onClick={() => onMatchClicked(match)}
-                                  >
-                                    <div className="Tournament__body__card__group__container">
-                                      <div className="Tournament__body__card__group__match__team">
-                                        <Image
-                                          src={
-                                            match?.matchTeams?.items[0]?.team
-                                              ?.flagUrl ?? undefined
-                                          }
-                                          alt={
-                                            match?.matchTeams?.items[0]?.team
-                                              ?.name
-                                          }
-                                          className="Tournament__body__card__group__match__team__flag"
-                                        />
-                                        <p className="Tournament__body__card__group__match__team__name">
-                                          {
-                                            match?.matchTeams?.items[0]?.team
-                                              ?.name
-                                          }
-                                        </p>
-                                      </div>
-                                      <div className="Tournament__body__card__group__match__board">
-                                        <span className="Tournament__body__card__group__match__score">
-                                          {
-                                            subscriptionMatches
-                                              .find(
-                                                (subMatch: SubscriptionMatch) =>
-                                                  subMatch.matchSubscriptionMatchesId ===
-                                                  match?.id
-                                              )
-                                              ?.subscriptionMatchTeams?.items.find(
-                                                (
-                                                  matchTeam: SubscriptionMatchTeam | null
-                                                ) => {
-                                                  return (
-                                                    matchTeam?.teamSubscriptionMatchTeamsId ===
-                                                    match?.matchTeams?.items[0]
-                                                      ?.team?.id
-                                                  );
-                                                }
-                                              )?.score
-                                          }
-                                        </span>
-                                        <span className="Tournament__body__card__group__match__team__name">
-                                          -
-                                        </span>
-                                        <span className="Tournament__body__card__group__match__score">
-                                          {
-                                            subscriptionMatches
-                                              .find(
-                                                (subMatch: SubscriptionMatch) =>
-                                                  subMatch.matchSubscriptionMatchesId ===
-                                                  match?.id
-                                              )
-                                              ?.subscriptionMatchTeams?.items.find(
-                                                (
-                                                  matchTeam: SubscriptionMatchTeam | null
-                                                ) => {
-                                                  return (
-                                                    matchTeam?.teamSubscriptionMatchTeamsId ===
-                                                    match?.matchTeams?.items[1]
-                                                      ?.team?.id
-                                                  );
-                                                }
-                                              )?.score
-                                          }
-                                        </span>
-                                      </div>
-                                      <div className="Tournament__body__card__group__match__team">
-                                        <Image
-                                          src={
-                                            match?.matchTeams?.items[1]?.team
-                                              ?.flagUrl ?? undefined
-                                          }
-                                          alt={
-                                            match?.matchTeams?.items[1]?.team
-                                              ?.name
-                                          }
-                                          className="Tournament__body__card__group__match__team__flag"
-                                        />
-                                        <p className="Tournament__body__card__group__match__team__name">
-                                          {
-                                            match?.matchTeams?.items[1]?.team
-                                              ?.name
-                                          }
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <p className="Tournament__body__card__group__match__date">
-                                      {format(
-                                        new Date(match?.matchDate ?? now()),
-                                        "MMMM dd, hh:mm",
-                                        { locale: es }
-                                      )}
-                                    </p>
-                                  </div>
-                                )
-                              )}
-                          </Col>
-                          <Col
-                            sm={24}
-                            xs={24}
-                            lg={12}
-                            md={12}
-                            className="Tournament__body__card__group__positions"
-                          >
-                            <Table
-                              key={index}
-                              columns={positionColumns}
-                              dataSource={getGroupPositionsByGroup(
-                                subscriptionMatches,
-                                group
-                              )}
-                              pagination={false}
-                            />
+                            <div
+                              className="Tournament__body__card__group__bonus"
+                              onClick={onBonusClicked}
+                            >
+                              <p className="Tournament__body__card__group__bonus__text">
+                                Llena tus bonificaciones!
+                              </p>
+                            </div>
                           </Col>
                         </Row>
                       </Card>
-                    ))}
-                  <Card
-                    title="Bonificaciónes"
-                    type="inner"
-                    className="Tournament__body__card__group"
-                  >
-                    <Row>
-                      <Col sm={24} xs={24} lg={12} md={12}>
-                        <div
-                          className="Tournament__body__card__group__bonus"
-                          onClick={onBonusClicked}
-                        >
-                          <p className="Tournament__body__card__group__bonus__text">
-                            Llena tus bonificaciones!
-                          </p>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Card>
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="8vos" key="2">
+                      {!!rounds &&
+                        !!rounds.length &&
+                        orderGroupsByName(
+                          rounds.find(
+                            (round: Round) => round.name === "Octavos de final"
+                          )?.groups?.items
+                        )?.map((group: Group | null, index: number) => (
+                          <Card
+                            key={index}
+                            title={group?.name}
+                            type="inner"
+                            className="Tournament__body__card__group"
+                          >
+                            <Row key={index}>
+                              <Col sm={24} xs={24} lg={12} md={12}>
+                                {!!group &&
+                                  orderMatchesByDate(group.matches?.items)?.map(
+                                    (match, key: number) => (
+                                      <div
+                                        key={key}
+                                        className="Tournament__body__card__group__match"
+                                        onClick={() => onMatchClicked(match)}
+                                      >
+                                        <div className="Tournament__body__card__group__container">
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__board">
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[0]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__team__name">
+                                              -
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[1]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <p className="Tournament__body__card__group__match__date">
+                                          {format(
+                                            new Date(match?.matchDate ?? now()),
+                                            "MMMM dd, hh:mm",
+                                            { locale: es }
+                                          )}
+                                        </p>
+                                      </div>
+                                    )
+                                  )}
+                              </Col>
+                            </Row>
+                          </Card>
+                        ))}
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="4tos" key="3">
+                      {!!rounds &&
+                        !!rounds.length &&
+                        orderGroupsByName(
+                          rounds.find(
+                            (round: Round) => round.name === "Cuartos de final"
+                          )?.groups?.items
+                        )?.map((group: Group | null, index: number) => (
+                          <Card
+                            key={index}
+                            title={group?.name}
+                            type="inner"
+                            className="Tournament__body__card__group"
+                          >
+                            <Row key={index}>
+                              <Col sm={24} xs={24} lg={12} md={12}>
+                                {!!group &&
+                                  orderMatchesByDate(group.matches?.items)?.map(
+                                    (match, key: number) => (
+                                      <div
+                                        key={key}
+                                        className="Tournament__body__card__group__match"
+                                        onClick={() => onMatchClicked(match)}
+                                      >
+                                        <div className="Tournament__body__card__group__container">
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__board">
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[0]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__team__name">
+                                              -
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[1]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <p className="Tournament__body__card__group__match__date">
+                                          {format(
+                                            new Date(match?.matchDate ?? now()),
+                                            "MMMM dd, hh:mm",
+                                            { locale: es }
+                                          )}
+                                        </p>
+                                      </div>
+                                    )
+                                  )}
+                              </Col>
+                            </Row>
+                          </Card>
+                        ))}
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Semis" key="4">
+                      {!!rounds &&
+                        !!rounds.length &&
+                        orderGroupsByName(
+                          rounds.find(
+                            (round: Round) => round.name === "Semifinal"
+                          )?.groups?.items
+                        )?.map((group: Group | null, index: number) => (
+                          <Card
+                            key={index}
+                            title={group?.name}
+                            type="inner"
+                            className="Tournament__body__card__group"
+                          >
+                            <Row key={index}>
+                              <Col sm={24} xs={24} lg={12} md={12}>
+                                {!!group &&
+                                  orderMatchesByDate(group.matches?.items)?.map(
+                                    (match, key: number) => (
+                                      <div
+                                        key={key}
+                                        className="Tournament__body__card__group__match"
+                                        onClick={() => onMatchClicked(match)}
+                                      >
+                                        <div className="Tournament__body__card__group__container">
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__board">
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[0]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__team__name">
+                                              -
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[1]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <p className="Tournament__body__card__group__match__date">
+                                          {format(
+                                            new Date(match?.matchDate ?? now()),
+                                            "MMMM dd, hh:mm",
+                                            { locale: es }
+                                          )}
+                                        </p>
+                                      </div>
+                                    )
+                                  )}
+                              </Col>
+                            </Row>
+                          </Card>
+                        ))}
+                    </Tabs.TabPane>
+                    <Tabs.TabPane tab="Finales" key="5">
+                      {!!rounds &&
+                        !!rounds.length &&
+                        orderGroupsByName(
+                          rounds.find((round: Round) => round.name === "Final")
+                            ?.groups?.items
+                        )?.map((group: Group | null, index: number) => (
+                          <Card
+                            key={index}
+                            title={group?.name}
+                            type="inner"
+                            className="Tournament__body__card__group"
+                          >
+                            <Row key={index}>
+                              <Col sm={24} xs={24} lg={12} md={12}>
+                                {!!group &&
+                                  orderMatchesByDate(group.matches?.items)?.map(
+                                    (match, key: number) => (
+                                      <div
+                                        key={key}
+                                        className="Tournament__body__card__group__match"
+                                        onClick={() => onMatchClicked(match)}
+                                      >
+                                        <div className="Tournament__body__card__group__container">
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[0]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__board">
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[0]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__team__name">
+                                              -
+                                            </span>
+                                            <span className="Tournament__body__card__group__match__score">
+                                              {
+                                                subscriptionMatches
+                                                  .find(
+                                                    (
+                                                      subMatch: SubscriptionMatch
+                                                    ) =>
+                                                      subMatch.matchSubscriptionMatchesId ===
+                                                      match?.id
+                                                  )
+                                                  ?.subscriptionMatchTeams?.items.find(
+                                                    (
+                                                      matchTeam: SubscriptionMatchTeam | null
+                                                    ) => {
+                                                      return (
+                                                        matchTeam?.teamSubscriptionMatchTeamsId ===
+                                                        match?.matchTeams
+                                                          ?.items[1]?.team?.id
+                                                      );
+                                                    }
+                                                  )?.score
+                                              }
+                                            </span>
+                                          </div>
+                                          <div className="Tournament__body__card__group__match__team">
+                                            <Image
+                                              src={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.flagUrl ?? undefined
+                                              }
+                                              alt={
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                              className="Tournament__body__card__group__match__team__flag"
+                                            />
+                                            <p className="Tournament__body__card__group__match__team__name">
+                                              {
+                                                match?.matchTeams?.items[1]
+                                                  ?.team?.name
+                                              }
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <p className="Tournament__body__card__group__match__date">
+                                          {format(
+                                            new Date(match?.matchDate ?? now()),
+                                            "MMMM dd, hh:mm",
+                                            { locale: es }
+                                          )}
+                                        </p>
+                                      </div>
+                                    )
+                                  )}
+                              </Col>
+                            </Row>
+                          </Card>
+                        ))}
+                    </Tabs.TabPane>
+                  </Tabs>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Inscritos" key="3">
                   <Table
@@ -950,6 +1481,15 @@ const Tournament: React.FC<Props> = props => {
                   />
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Posiciones" key="4">
+                  <Radio.Group
+                    onChange={onPositionsOptionChange}
+                    value={positionsOption}
+                    className="Tournament__body__positions__options"
+                  >
+                    <Radio value="ALL">Todas las Fases</Radio>
+                    <Radio value="GROUPS">Grupos</Radio>
+                    <Radio value="BRACKETS">Brackets</Radio>
+                  </Radio.Group>
                   <Table
                     columns={positionsColumns}
                     dataSource={positions}

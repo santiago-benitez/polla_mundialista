@@ -26,14 +26,33 @@ const SaveMatchForm: React.FC<Props> = props => {
                 eq: match?.id
               }
             };
-            const subscriptionMatchesResult: any = await API.graphql({
-              query: queries.listSubscriptionMatches,
-              variables: { filter: subscriptionMatchesFilter, limit: "10000" }
-            });
-            const fetchedMatches =
-              subscriptionMatchesResult?.data?.listSubscriptionMatches?.items;
-            if (fetchedMatches && fetchedMatches.length) {
-              const filteredMatches = fetchedMatches.filter(
+            let nextToken = null;
+            let fetchedSubscriptionMatches: any = [];
+            do {
+              const subscriptionMatchesResult: any = await API.graphql({
+                query: queries.listSubscriptionMatches,
+                variables: {
+                  filter: subscriptionMatchesFilter,
+                  limit: "10000",
+                  nextToken
+                }
+              });
+              if (subscriptionMatchesResult?.data?.listSubscriptionMatches) {
+                fetchedSubscriptionMatches = [
+                  ...fetchedSubscriptionMatches,
+                  ...subscriptionMatchesResult.data.listSubscriptionMatches
+                    .items
+                ];
+                nextToken =
+                  subscriptionMatchesResult.data.listSubscriptionMatches
+                    .nextToken;
+              }
+            } while (nextToken != null);
+            if (
+              fetchedSubscriptionMatches &&
+              fetchedSubscriptionMatches.length
+            ) {
+              const filteredMatches = fetchedSubscriptionMatches.filter(
                 (fetchedMatch: SubscriptionMatch) => {
                   return (
                     fetchedMatch.subscription
@@ -76,10 +95,10 @@ const SaveMatchForm: React.FC<Props> = props => {
                   };
                 }
               );
-              setLoadingMatches(false);
               setSubscriptionMatches(mappedMatches);
             }
           }
+          setLoadingMatches(false);
         } catch (error) {
           console.log(error);
         }
@@ -111,7 +130,7 @@ const SaveMatchForm: React.FC<Props> = props => {
         }}
         okButtonProps={{ disabled: loading || blocked }}
       >
-        {!loading && !blocked && (
+        {!loading && !blocked && !!match?.matchTeams?.items.length && (
           <Form
             form={form}
             layout="vertical"
@@ -211,6 +230,11 @@ const SaveMatchForm: React.FC<Props> = props => {
               </div>
             </div>
           </Form>
+        )}
+        {!loading && !blocked && !match?.matchTeams?.items.length && (
+          <Row>
+            <p>Espera a que se definan los que clasifican para este partido</p>
+          </Row>
         )}
         {(loading || loadingMatches) && (
           <div

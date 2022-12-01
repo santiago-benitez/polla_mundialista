@@ -1,4 +1,9 @@
-import { Match, Group, SubscriptionMatch } from "../../../API";
+import {
+  Match,
+  Group,
+  SubscriptionMatch,
+  PollaSubscription
+} from "../../../API";
 
 export const orderMatchesByDate = (matches: (Match | null)[] | undefined) => {
   if (!matches) {
@@ -104,4 +109,59 @@ export const removeEmailFromText = (text: string | undefined) => {
     return text;
   }
   return text.substring(0, index);
+};
+
+export const calculatePositions = (
+  subscriptions: (PollaSubscription | null)[] | undefined,
+  filter: string[] | undefined = undefined
+) => {
+  if (!subscriptions) {
+    return undefined;
+  }
+  return subscriptions.map(sub => {
+    let filteredMatches = sub?.subscriptionMatches?.items;
+    if (filteredMatches && filter) {
+      filteredMatches = filteredMatches.filter(
+        (subscriptionMatch: SubscriptionMatch | null) => {
+          return filter.includes(
+            subscriptionMatch?.match?.group?.round?.name ?? ""
+          );
+        }
+      );
+    }
+    const points = filteredMatches?.reduce((accumulator, object) => {
+      return accumulator + (object?.subscriptionPoints ?? 0);
+    }, 0);
+    return {
+      email: sub?.email,
+      points
+    };
+  });
+};
+
+export const sortPositions = (subscriptionPoints: any) => {
+  if (!subscriptionPoints) {
+    return undefined;
+  }
+  const subscriptionsPositions = subscriptionPoints.sort((a: any, b: any) => {
+    if (!a || !b) {
+      return 0;
+    }
+    if ((a.points ?? 0) < (b.points ?? 0)) {
+      return 1;
+    }
+    if ((a.points ?? 0) > (b.points ?? 0)) {
+      return -1;
+    }
+    return 0;
+  });
+  const mappedSubscriptionsPositions = subscriptionsPositions?.map(
+    (sub: any, index: number) => {
+      return {
+        position: index + 1,
+        ...sub
+      };
+    }
+  );
+  return mappedSubscriptionsPositions;
 };

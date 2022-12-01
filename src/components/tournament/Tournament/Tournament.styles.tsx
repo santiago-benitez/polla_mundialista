@@ -28,6 +28,11 @@ const TournamentStyled = styled.div<Props>`
       justify-content: center;
       padding: 1rem 0;
       min-height: calc(98vh - 3.4rem);
+      &__positions {
+        &__options {
+          margin-bottom: 1rem;
+        }
+      }
       &__card {
         min-width: 75vw;
         &__title {

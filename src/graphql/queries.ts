@@ -40,6 +40,13 @@ export const getPollaMundialista = /* GraphQL */ `
             items {
               id
               subscriptionPoints
+              match {
+                group {
+                  round {
+                    name
+                  }
+                }
+              }
             }
           }
           subscriptionBonuses {
