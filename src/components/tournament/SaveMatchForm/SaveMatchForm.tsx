@@ -1,5 +1,5 @@
 import { Image } from "@aws-amplify/ui-react";
-import { Form, Modal, Spin, InputNumber, Row, Col } from "antd";
+import { Form, Modal, Spin, InputNumber, Row, Col, Radio } from "antd";
 import { API } from "aws-amplify";
 import React, { useEffect, useState } from "react";
 import { SubscriptionMatch } from "../../../API";
@@ -11,9 +11,20 @@ import { SaveMatchFormProps as Props } from "./SaveMatchForm.types";
 
 const SaveMatchForm: React.FC<Props> = props => {
   const [form] = Form.useForm();
-  const { open, onCreate, onCancel, loading, match, blocked, pollaId } = props;
+  const {
+    open,
+    onCreate,
+    onCancel,
+    loading,
+    match,
+    blocked,
+    pollaId,
+    isElimination
+  } = props;
   const [subscriptionMatches, setSubscriptionMatches] = useState([]);
   const [loadingMatches, setLoadingMatches] = useState<boolean>(false);
+  const [teamAScore, setTeamAScore] = useState<string | null | undefined>();
+  const [teamBScore, setTeamBScore] = useState<string | null | undefined>();
 
   useEffect(() => {
     if (blocked) {
@@ -166,50 +177,102 @@ const SaveMatchForm: React.FC<Props> = props => {
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-around",
-                  width: "9rem"
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  height: "5rem"
                 }}
               >
-                <Form.Item
-                  name="teamA"
-                  label={null}
-                  rules={[
-                    {
-                      required: true,
-                      message: "!"
-                    }
-                  ]}
-                >
-                  <InputNumber
-                    style={{
-                      width: "3.5rem"
-                    }}
-                  />
-                </Form.Item>
-                <span
+                <div
                   style={{
-                    paddingTop: "0.2rem"
+                    display: "flex",
+                    justifyContent: "space-around",
+                    width: "9rem"
                   }}
                 >
-                  -
-                </span>
-                <Form.Item
-                  name="teamB"
-                  label={null}
-                  rules={[
-                    {
-                      required: true,
-                      message: "!"
-                    }
-                  ]}
-                >
-                  <InputNumber
+                  <Form.Item
+                    name="teamA"
+                    label={null}
+                    rules={[
+                      {
+                        required: true,
+                        message: "!"
+                      }
+                    ]}
+                  >
+                    <InputNumber
+                      style={{
+                        width: "3.5rem"
+                      }}
+                      onChange={(value: string | null) => setTeamAScore(value)}
+                    />
+                  </Form.Item>
+                  <span
                     style={{
-                      width: "3.5rem"
+                      paddingTop: "0.2rem"
                     }}
-                  />
-                </Form.Item>
+                  >
+                    -
+                  </span>
+                  <Form.Item
+                    name="teamB"
+                    label={null}
+                    rules={[
+                      {
+                        required: true,
+                        message: "!"
+                      }
+                    ]}
+                  >
+                    <InputNumber
+                      style={{
+                        width: "3.5rem"
+                      }}
+                      onChange={(value: string | null) => setTeamBScore(value)}
+                    />
+                  </Form.Item>
+                </div>
+                {teamAScore !== null &&
+                  teamAScore !== undefined &&
+                  teamAScore === teamBScore &&
+                  isElimination && (
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        width: "9rem",
+                        paddingLeft: "0.5rem"
+                      }}
+                    >
+                      <Form.Item
+                        name="winner"
+                        label={null}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Seleccione uno"
+                          }
+                        ]}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          width: "9rem"
+                        }}
+                      >
+                        <Radio.Group
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "7rem"
+                          }}
+                        >
+                          <Radio value={"A"}></Radio>
+                          <Radio value={"B"}></Radio>
+                        </Radio.Group>
+                      </Form.Item>
+                    </div>
+                  )}
               </div>
+
               <div
                 style={{
                   display: "flex",

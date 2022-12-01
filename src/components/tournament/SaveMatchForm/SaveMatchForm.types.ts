@@ -11,6 +11,7 @@ export interface SaveMatchFormProps {
   match: Match | undefined;
   blocked: boolean;
   pollaId: string | undefined;
+  isElimination: boolean;
 }
 
 // Styled Component Props

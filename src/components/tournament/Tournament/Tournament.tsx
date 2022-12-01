@@ -69,6 +69,7 @@ const Tournament: React.FC<Props> = props => {
   >([]);
   const [polla, setPolla] = useState<PollaMundialista | undefined>();
   const [rounds, setRounds] = useState<Round[] | undefined>(undefined);
+  const [isElimination, setIsElimination] = useState<boolean>(false);
   const [mySubscription, setMySubscription] =
     useState<PollaSubscription | null>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -214,7 +215,7 @@ const Tournament: React.FC<Props> = props => {
     setLoading(false);
   };
 
-  const onMatchClicked = (match: Match | null) => {
+  const onMatchClicked = (match: Match | null, elimination: boolean) => {
     let blocked = false;
     if (match) {
       if (
@@ -225,6 +226,7 @@ const Tournament: React.FC<Props> = props => {
       setMatchBlocked(blocked);
       setSelectedMatch(match);
       setOpen(true);
+      setIsElimination(elimination);
     }
   };
   const onCancel = () => {
@@ -267,7 +269,11 @@ const Tournament: React.FC<Props> = props => {
             +result.teamA >= +result.teamB
               ? +result.teamA > +result.teamB
                 ? 3
-                : 1
+                : !result.winner
+                ? 1
+                : result.winner === "A"
+                ? 3
+                : 0
               : 0,
           teamSubscriptionMatchTeamsId:
             values.match.matchTeams.items[0].team.id,
@@ -298,7 +304,11 @@ const Tournament: React.FC<Props> = props => {
             +result.teamB >= +result.teamA
               ? +result.teamB > +result.teamA
                 ? 3
-                : 1
+                : !result.winner
+                ? 1
+                : result.winner === "B"
+                ? 3
+                : 0
               : 0,
           teamSubscriptionMatchTeamsId:
             values.match.matchTeams.items[1].team.id,
@@ -808,7 +818,9 @@ const Tournament: React.FC<Props> = props => {
                                       <div
                                         key={key}
                                         className="Tournament__body__card__group__match"
-                                        onClick={() => onMatchClicked(match)}
+                                        onClick={() =>
+                                          onMatchClicked(match, false)
+                                        }
                                       >
                                         <div className="Tournament__body__card__group__container">
                                           <div className="Tournament__body__card__group__match__team">
@@ -973,7 +985,9 @@ const Tournament: React.FC<Props> = props => {
                                       <div
                                         key={key}
                                         className="Tournament__body__card__group__match"
-                                        onClick={() => onMatchClicked(match)}
+                                        onClick={() =>
+                                          onMatchClicked(match, true)
+                                        }
                                       >
                                         <div className="Tournament__body__card__group__container">
                                           <div className="Tournament__body__card__group__match__team">
@@ -1103,7 +1117,9 @@ const Tournament: React.FC<Props> = props => {
                                       <div
                                         key={key}
                                         className="Tournament__body__card__group__match"
-                                        onClick={() => onMatchClicked(match)}
+                                        onClick={() =>
+                                          onMatchClicked(match, true)
+                                        }
                                       >
                                         <div className="Tournament__body__card__group__container">
                                           <div className="Tournament__body__card__group__match__team">
@@ -1233,7 +1249,9 @@ const Tournament: React.FC<Props> = props => {
                                       <div
                                         key={key}
                                         className="Tournament__body__card__group__match"
-                                        onClick={() => onMatchClicked(match)}
+                                        onClick={() =>
+                                          onMatchClicked(match, true)
+                                        }
                                       >
                                         <div className="Tournament__body__card__group__container">
                                           <div className="Tournament__body__card__group__match__team">
@@ -1362,7 +1380,9 @@ const Tournament: React.FC<Props> = props => {
                                       <div
                                         key={key}
                                         className="Tournament__body__card__group__match"
-                                        onClick={() => onMatchClicked(match)}
+                                        onClick={() =>
+                                          onMatchClicked(match, true)
+                                        }
                                       >
                                         <div className="Tournament__body__card__group__container">
                                           <div className="Tournament__body__card__group__match__team">
@@ -1508,6 +1528,7 @@ const Tournament: React.FC<Props> = props => {
             loading={saveLoading}
             blocked={matchBlocked}
             pollaId={pid as string}
+            isElimination={isElimination}
           />
           <SaveBonusForm
             onCancel={onCancelBonus}
