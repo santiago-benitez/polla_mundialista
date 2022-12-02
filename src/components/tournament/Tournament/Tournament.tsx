@@ -782,6 +782,47 @@ const Tournament: React.FC<Props> = props => {
                         no atinaste ningún marcador, total 0 pts.
                       </strong>
                     </p>
+                    <h3>Ejemplos de 8vos en adelante</h3>
+                    <p>
+                      Pronóstico: Argentina 0 - 0 Brasil (seleccionando a
+                      Argentina como ganador), Real: Argentina 2 - 1 Brasil.
+                      <br />
+                      <strong>
+                        Ganas 3 puntos por atinar el ganador, 0 pts ya que no
+                        atinaste ningún marcador, total: 3 pts
+                      </strong>
+                    </p>
+                    <p>
+                      Pronóstico: Argentina 0 - 0 Brasil (seleccionando a
+                      Argentina como ganador), Real: Argentina 0 - 0 Brasil
+                      (Gana Argentina en penales).
+                      <br />
+                      <strong>
+                        Ganas 3 puntos por atinar el ganador, 2 pts por atinar
+                        el marcador de Argentina y Brasil y 2 pts extras por
+                        atinar los dos marcadores , total: 7 pts
+                      </strong>
+                    </p>
+                    <p>
+                      Pronóstico: Argentina 0 - 0 Brasil (seleccionando a
+                      Argentina como ganador), Real: Argentina 0 - 0 Brasil
+                      (Gana Brasil en penales).
+                      <br />
+                      <strong>
+                        Ganas 0 puntos por no atinar el ganador, 2 pts por
+                        atinar el marcador de Argentina y Brasil y 2 pts extras
+                        por atinar los dos marcadores , total: 4 pts
+                      </strong>
+                    </p>
+                    <p>
+                      Pronóstico: Argentina 2 - 1 Brasil, Real: Argentina 0 - 0
+                      Brasil (Gana Argentina en penales).
+                      <br />
+                      <strong>
+                        Ganas 3 puntos por atinar el ganador, 0 pts por no
+                        atinar los marcadores, total: 3 pts
+                      </strong>
+                    </p>
                     <h3>Bonificación extra</h3>
                     <p>Campeón: 15 pts</p>
                     <p>Subcampeón: 10 pts</p>

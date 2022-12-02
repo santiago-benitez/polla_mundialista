@@ -14,7 +14,16 @@ import {
   UpdateMatchTeamInput,
   UpdateSubscriptionMatchInput
 } from "../../../API";
-import { Button, Form, InputNumber, message, Row, Select, Table } from "antd";
+import {
+  Button,
+  Form,
+  InputNumber,
+  message,
+  Radio,
+  Row,
+  Select,
+  Table
+} from "antd";
 import { calculatePoints } from "./Admin.utils";
 import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useRouter } from "next/router";
@@ -24,6 +33,8 @@ const Admin: React.FC<Props> = props => {
   const [matches, setMatches] = useState<any>([]);
   const [pollas, setPollas] = useState<any>([]);
   const [validatedSubscriptions, setValidatedSubscriptions] = useState<any>([]);
+  const [teamAScore, setTeamAScore] = useState<string | null | undefined>();
+  const [teamBScore, setTeamBScore] = useState<string | null | undefined>();
   const [completedMatches, setCompletedMatches] = useState<
     (Match | null)[] | undefined
   >([]);
@@ -114,6 +125,7 @@ const Admin: React.FC<Props> = props => {
   const onFinish = async (values: any) => {
     const teamScoreA = values.teamAScore;
     const teamScoreB = values.teamBScore;
+    const winner = values.winner;
 
     // 1.- get Subscription Matches
     let nextToken = null;
@@ -144,9 +156,25 @@ const Admin: React.FC<Props> = props => {
       selectedMatch?.matchTeams?.items[1]?.id
     ) {
       const teamPointsA =
-        +teamScoreA >= +teamScoreB ? (+teamScoreA > +teamScoreB ? 3 : 1) : 0;
+        +teamScoreA >= +teamScoreB
+          ? +teamScoreA > +teamScoreB
+            ? 3
+            : !winner
+            ? 1
+            : winner === "A"
+            ? 3
+            : 0
+          : 0;
       const teamPointsB =
-        +teamScoreB >= +teamScoreA ? (+teamScoreB > +teamScoreA ? 3 : 1) : 0;
+        +teamScoreB >= +teamScoreA
+          ? +teamScoreB > +teamScoreA
+            ? 3
+            : !winner
+            ? 1
+            : winner === "B"
+            ? 3
+            : 0
+          : 0;
       const matchTeamAInput: UpdateMatchTeamInput = {
         id: selectedMatch?.matchTeams?.items[0]?.id,
         score: teamScoreA,
@@ -308,7 +336,9 @@ const Admin: React.FC<Props> = props => {
                   }
                 ]}
               >
-                <InputNumber />
+                <InputNumber
+                  onChange={(value: string | null) => setTeamAScore(value)}
+                />
               </Form.Item>
               <Form.Item
                 name="teamBScore"
@@ -320,8 +350,24 @@ const Admin: React.FC<Props> = props => {
                   }
                 ]}
               >
-                <InputNumber />
+                <InputNumber
+                  onChange={(value: string | null) => setTeamBScore(value)}
+                />
               </Form.Item>
+              {teamAScore !== null &&
+                teamAScore !== undefined &&
+                teamAScore === teamBScore && (
+                  <Form.Item name="winner" label={null}>
+                    <Radio.Group>
+                      <Radio value={"A"}>
+                        {selectedMatch?.matchTeams?.items[0]?.team?.name}
+                      </Radio>
+                      <Radio value={"B"}>
+                        {selectedMatch?.matchTeams?.items[1]?.team?.name}
+                      </Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                )}
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="primary" htmlType="submit">
                   Guardar Resultado
